@@ -32,8 +32,14 @@ export type CollectionProps<Values = Record<string, JsonValue>> = {
  * single transaction, or none of them.
  */
 export type CommitOp =
-  /** Sets section fields; `null` resets a field to its code default */
-  | { type: 'section.save'; page: string; section: string; changes: Record<string, JsonValue> }
+  /** Sets section fields; fields in `reset` go back to their code defaults */
+  | {
+      type: 'section.save'
+      page: string
+      section: string
+      changes: Record<string, JsonValue>
+      reset?: string[]
+    }
   /** `ref` lets later ops in the same commit refer to the new item */
   | { type: 'doc.create'; collection: string; ref: string; data: Record<string, JsonValue> }
   /** `data` holds only the fields that changed */

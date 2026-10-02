@@ -327,14 +327,15 @@ export class Cms {
     const section: Section | undefined = this.page(op.page).sections[op.section]
     if (!section) return fail('', `Unknown section "${op.page}.${op.section}"`)
 
+    const changes = op.changes ?? {}
+    const reset = op.reset ?? []
     const toValidate: Record<string, Field> = {}
-    for (const key of Object.keys(op.changes)) {
-      const field = section.fields[key]
-      if (!field) return fail(key, `Unknown field "${key}"`)
-      if (op.changes[key] !== null) toValidate[key] = field
+    for (const key of [...Object.keys(changes), ...reset]) {
+      if (!section.fields[key]) return fail(key, `Unknown field "${key}"`)
     }
+    for (const key of Object.keys(changes)) toValidate[key] = section.fields[key]
 
-    const validated = await this.#validate(toValidate, op.changes, fail)
+    const validated = await this.#validate(toValidate, changes, fail)
     if (!validated) return
 
     const row = await trx
@@ -342,10 +343,8 @@ export class Cms {
       .where({ page: op.page, section: op.section })
       .first()
     const data: Record<string, JsonValue> = { ...(parse(row?.data ?? null) ?? {}) }
-    for (const [key, value] of Object.entries(op.changes)) {
-      if (value === null) delete data[key]
-      else data[key] = validated[key]
-    }
+    for (const key of reset) delete data[key]
+    for (const key of Object.keys(changes)) data[key] = validated[key]
 
     const json = JSON.stringify(data)
     if (!Object.keys(data).length) {
