@@ -1,0 +1,41 @@
+{
+  "name": "@martipops/cms-adonis",
+  "version": "0.0.0",
+  "private": true,
+  "description": "AdonisJS side of the CMS: content storage, validation, commit and history endpoints",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    },
+    "./cms_provider": {
+      "types": "./build/providers/cms_provider.d.ts",
+      "default": "./build/providers/cms_provider.js"
+    },
+    "./services/main": {
+      "types": "./build/services/main.d.ts",
+      "default": "./build/services/main.js"
+    },
+    "./controller": {
+      "types": "./build/src/controller.d.ts",
+      "default": "./build/src/controller.js"
+    }
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput"
+  },
+  "dependencies": {
+    "@martipops/cms-core": "*"
+  },
+  "peerDependencies": {
+    "@adonisjs/core": "^7.0.0",
+    "@adonisjs/lucid": "^22.0.0",
+    "@vinejs/vine": "^4.0.0"
+  }
+}
