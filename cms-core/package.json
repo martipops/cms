@@ -1,0 +1,21 @@
+{
+  "name": "@martipops/cms-core",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Isomorphic schema DSL for the CMS: field definitions, sections, collections and value helpers",
+  "type": "module",
+  "license": "UNLICENSED",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    }
+  },
+  "files": [
+    "build"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput"
+  }
+}
