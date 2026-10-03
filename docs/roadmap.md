@@ -46,27 +46,14 @@ media: {
 
 ### Installer
 
-**Why.** [Installing](installing.md) has nine manual steps. `node ace add @sonata/cms-adonis` should do them all.
+✅ **Built:** `node ace configure @sonata/cms-adonis` plus `cms:make:page`, `cms:make:collection` and `cms:make:field` (see [installing](installing.md)). The rest of the original design is still open:
 
-**Design.** Adonis's `configure` hook with codemods:
-
-1. `codemods.updateRcFile`: register the provider and the `cms:*` commands
-2. `codemods.makeUsingStub`: `config/cms.ts`, the migration, `app/cms/pages/site.ts`
-3. `codemods.registerMiddleware` / an `addRoutes`-style edit for `registerCmsRoutes`
-4. Patch `inertia/app.ts` (`.use(cms, …)`) and `app.css` (`@source`) with ts-morph, and print a clear manual instruction if the file looks unusual
-5. Ask whether to scaffold the toolbar into `inertia/layouts/default.vue`
-
-Ship ace commands alongside it:
-
-| Command                      | Does                                                                                                 |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------- |
-| `cms:make:page <name>`       | Stub a page schema and print the controller and Vue snippets                                         |
-| `cms:make:collection <name>` | Stub a collection schema                                                                             |
-| `cms:make:field <name>`      | Stub a custom field type: server validator + Vue editor component                                    |
-| `cms:doctor`                 | Report orphaned stored fields, unknown sections, media referenced but missing, invalid stored values |
-| `cms:export` / `cms:import`  | See [content bundles](#content-bundles)                                                              |
-
-**Size.** M
+| Command / step              | Does                                                                                                 | Size |
+| --------------------------- | ---------------------------------------------------------------------------------------------------- | ---- |
+| Toolbar scaffold            | Offer to add `<CmsToolbar>` to `inertia/layouts/default.vue` during `configure`                      | S    |
+| `--install` flag            | Install `@sonata/cms-core` and `@sonata/cms-vue` from `configure` (`codemods.installPackages`)       | S    |
+| `cms:doctor`                | Report orphaned stored fields, unknown sections, media referenced but missing, invalid stored values | M    |
+| `cms:export` / `cms:import` | See [content bundles](#content-bundles)                                                              | M    |
 
 ### Typed content
 

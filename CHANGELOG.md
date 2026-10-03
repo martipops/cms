@@ -17,6 +17,8 @@ First version prepared for use outside a client site.
 
 **Added**
 
+- `node ace configure @sonata/cms-adonis`: registers the provider and commands, creates `config/cms.ts` and the migration, mounts the routes, and installs the Vue plugin and Tailwind entry.
+- `cms:make:page`, `cms:make:collection` and `cms:make:field` generators, which also register what they create in `config/cms.ts`.
 - `tablePrefix` config.
 - `cmsTablesV1` (`@sonata/cms-adonis/schema`): the tables as a versioned migration step.
 - `@sonata/cms-vue/tailwind.css`, replacing a hand-written `@source` path.

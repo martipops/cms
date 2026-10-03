@@ -1,0 +1,22 @@
+{{{
+  exports({ to: app.makePath('app/cms/collections', entity.path, fileName) })
+}}}
+import { defineCollection, f } from '@sonata/cms-core'
+
+/**
+ * Send it with cms.collectionProps('{{ collectionName }}', ctx) and render it with:
+ *
+ *   <CmsCollection v-slot="{ items, edit }" :collection="{{ collectionName }}">
+ *     <article v-for="item in items" :key="item.key" @click="edit(item)">…</article>
+ *   </CmsCollection>
+ */
+export default defineCollection('{{ collectionName }}', {
+  label: {{{ label }}},
+  labelPlural: {{{ labelPlural }}},
+  titleField: 'name',
+  slugFrom: 'name',
+  fields: {
+    name: f.text({ required: true, max: 120 }),
+    description: f.textarea(),
+  },
+})

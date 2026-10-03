@@ -1,0 +1,20 @@
+{{{
+  exports({ to: app.makePath('database/migrations', fileName) })
+}}}
+import { BaseSchema } from '@adonisjs/lucid/schema'
+import { cmsTablesV1 } from '@sonata/cms-adonis/schema'
+
+/**
+ * Tables for @sonata/cms-adonis. Sections hold only edited fields (defaults
+ * live in code); collection items are JSON documents; every change is
+ * appended to revisions.
+ */
+export default class extends BaseSchema {
+  async up() {
+    cmsTablesV1.up(this.schema)
+  }
+
+  async down() {
+    cmsTablesV1.down(this.schema)
+  }
+}

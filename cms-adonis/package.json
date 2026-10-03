@@ -25,13 +25,17 @@
     "./schema": {
       "types": "./build/src/schema.d.ts",
       "default": "./build/src/schema.js"
+    },
+    "./commands": {
+      "types": "./build/commands/main.d.ts",
+      "default": "./build/commands/main.js"
     }
   },
   "files": [
     "build"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "tsc -p tsconfig.json && node scripts/copy_stubs.js && adonis-kit index build/commands",
     "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
     "test": "node --import=@poppinss/ts-exec bin/test.ts",
     "typecheck": "tsc -p tsconfig.test.json"
@@ -42,7 +46,8 @@
   "peerDependencies": {
     "@adonisjs/core": "^7.0.0",
     "@adonisjs/lucid": "^22.0.0",
-    "@vinejs/vine": "^4.0.0"
+    "@vinejs/vine": "^4.0.0",
+    "@adonisjs/assembler": "^8.0.0"
   },
   "devDependencies": {
     "@adonisjs/core": "^7.3.3",
@@ -54,7 +59,8 @@
     "@vinejs/vine": "^4.4.0",
     "better-sqlite3": "^12.10.0",
     "reflect-metadata": "^0.2.2",
-    "typescript": "~6.0.3"
+    "typescript": "~6.0.3",
+    "ts-morph": "^27.0.2"
   },
   "keywords": [
     "cms",
@@ -62,5 +68,10 @@
     "inertia",
     "vue",
     "nuxt-ui"
-  ]
+  ],
+  "peerDependenciesMeta": {
+    "@adonisjs/assembler": {
+      "optional": true
+    }
+  }
 }

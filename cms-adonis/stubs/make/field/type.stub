@@ -1,0 +1,19 @@
+{{{
+  exports({ to: app.makePath('app/cms/fields', entity.path, fileName) })
+}}}
+import vine from '@vinejs/vine'
+import { defineFieldType } from '@sonata/cms-adonis'
+
+/**
+ * A custom field type. Use it in schemas as
+ *
+ *   f.custom('{{ typeName }}', { default: '' })
+ *
+ * Its editor is {{ editorPath }}, registered with the Vue plugin:
+ * .use(cms, { fields: { {{ typeName }}: {{ editorName }} } })
+ */
+export const {{ typeName }}Type = defineFieldType({
+  name: '{{ typeName }}',
+  /** Validates (and may clean up) a value before it's saved */
+  validator: () => vine.string().trim().maxLength(200),
+})

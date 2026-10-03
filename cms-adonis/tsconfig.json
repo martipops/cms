@@ -5,5 +5,13 @@
     "outDir": "./build",
     "types": ["node"]
   },
-  "include": ["index.ts", "src/**/*.ts", "providers/**/*.ts", "services/**/*.ts"]
+  "include": [
+    "index.ts",
+    "configure.ts",
+    "src/**/*.ts",
+    "providers/**/*.ts",
+    "services/**/*.ts",
+    "stubs/**/*.ts",
+    "commands/**/*.ts"
+  ]
 }

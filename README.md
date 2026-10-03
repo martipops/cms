@@ -74,7 +74,7 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 | Media-in-use protection across all content                    | ✅ Built (media library itself lives in the app)       |
 | Custom field types (server validator + editor component)      | ✅ Built                                               |
 | Media library inside the package                              | 🧭 [Planned](docs/roadmap.md#media-module)             |
-| `node ace configure` installer                                | 🧭 [Planned](docs/roadmap.md#installer)                |
+| `node ace configure` installer and `cms:make:*` generators    | ✅ Built                                               |
 | Typed slot data (`data.title: string`)                        | 🧭 [Planned](docs/roadmap.md#typed-content)            |
 | Lucid-model-backed collections                                | 🧭 [Planned](docs/roadmap.md#model-backed-collections) |
 | Conflict detection, drafts/publishing, presence, AI assist, … | 🔭 [Roadmap](docs/roadmap.md)                          |

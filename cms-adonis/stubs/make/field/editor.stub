@@ -1,0 +1,39 @@
+{{{
+  exports({ to: app.makePath(editorPath) })
+}}}
+<script lang="ts">
+import { defineComponent, type PropType } from 'vue'
+import type { CustomField, JsonValue } from '@sonata/cms-core'
+
+/**
+ * Editor for the "{{ typeName }}" field type. errors holds server errors by
+ * path relative to this field ("" for the field itself).
+ */
+export default defineComponent({
+  props: {
+    field: {
+      type: Object as PropType<CustomField>,
+      required: true,
+    },
+    modelValue: {
+      type: [String, Number, Boolean, Object, Array] as PropType<JsonValue>,
+      default: null,
+    },
+    errors: {
+      type: Object as PropType<Record<string, string>>,
+      default: () => ({}),
+    },
+  },
+  emits: {
+    'update:modelValue': (_value: JsonValue) => true,
+  },
+})
+</script>
+
+<template>
+  <UInput
+    :model-value="typeof modelValue === 'string' ? modelValue : ''"
+    class="w-full"
+    @update:model-value="(value) => $emit('update:modelValue', String(value ?? ''))"
+  />
+</template>

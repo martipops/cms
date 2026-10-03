@@ -1,0 +1,24 @@
+{{{
+  exports({ to: app.makePath('app/cms/pages', entity.path, fileName) })
+}}}
+import { definePage, f, section } from '@sonata/cms-core'
+
+/**
+ * Render it with:
+ *
+ *   // controller
+ *   return inertia.render('{{ componentName }}', { content: await cms.pageProps('{{ pageName }}', ctx) })
+ *
+ *   <!-- page component -->
+ *   <CmsPage :content="content">
+ *     <CmsSection v-slot="{ data }" name="hero">
+ *       <h1>{{{ titleBinding }}}</h1>
+ *     </CmsSection>
+ *   </CmsPage>
+ */
+export default definePage('{{ pageName }}', {
+  hero: section('Hero', {
+    title: f.text({ default: {{{ title }}}, max: 120, required: true }),
+    intro: f.textarea({ default: '' }),
+  }),
+})

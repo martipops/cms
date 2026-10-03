@@ -3,9 +3,7 @@
   "compilerOptions": {
     "noEmit": true,
     "rootDir": "./",
-    "types": [
-      "node"
-    ]
+    "types": ["node"]
   },
   "include": [
     "src/**/*.ts",
@@ -13,6 +11,10 @@
     "bin/**/*.ts",
     "index.ts",
     "providers/**/*.ts",
-    "services/**/*.ts"
-  ]
+    "services/**/*.ts",
+    "configure.ts",
+    "stubs/**/*.ts",
+    "commands/**/*.ts"
+  ],
+  "exclude": ["tests/fixtures/**"]
 }

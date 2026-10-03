@@ -1,0 +1,39 @@
+{{{
+  exports({ to: app.configPath('cms.ts') })
+}}}
+import { defineConfig } from '@sonata/cms-adonis'
+import type { HttpContext } from '@adonisjs/core/http'
+
+/**
+ * Editable content. Add to it with:
+ *
+ *   node ace cms:make:page home
+ *   node ace cms:make:collection team_members
+ *   node ace cms:make:field opening_hours
+ */
+export default defineConfig({
+  pages: [],
+  collections: [],
+  fieldTypes: [],
+
+  /**
+   * Whether this request may edit content. Nobody can until you change it,
+   * e.g. ctx.auth.user !== undefined or ctx.bouncer.allows('editContent')
+   */
+  authorize: (_ctx: HttpContext) => false,
+
+  /**
+   * The signed-in user, recorded on revisions, e.g.
+   * ({ auth }) => (auth.user ? { id: auth.user.id, name: auth.user.email } : null)
+   */
+  user: () => null,
+
+  /**
+   * Needed once a schema has image or file fields: whether a media library
+   * file exists. Values are keys like "images/hero.webp"
+   */
+  // media: {
+  //   exists: async (key, folder) => …,
+  //   baseUrl: '/media/',
+  // },
+})
