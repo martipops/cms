@@ -1,6 +1,6 @@
 # Commit protocol
 
-Types live in `@martipops/cms-core` (`protocol.ts`), so client and server can't drift apart. Changing this protocol means updating this document and both packages together.
+Types live in `@sonata/cms-core` (`protocol.ts`), so client and server can't drift apart. Changing this protocol means updating this document and both packages together.
 
 ## Request
 

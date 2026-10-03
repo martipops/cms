@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type PropType, type SlotsType } from 'vue'
-import type { CollectionProps } from '@martipops/cms-core'
+import type { CollectionProps } from '@sonata/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import {
   canEditCollection,

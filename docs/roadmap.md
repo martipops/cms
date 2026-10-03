@@ -46,7 +46,7 @@ media: {
 
 ### Installer
 
-**Why.** [Installing](installing.md) has nine manual steps. `node ace add @martipops/cms-adonis` should do them all.
+**Why.** [Installing](installing.md) has nine manual steps. `node ace add @sonata/cms-adonis` should do them all.
 
 **Design.** Adonis's `configure` hook with codemods:
 
@@ -77,7 +77,7 @@ Ship ace commands alongside it:
 ```ts
 // generated: .adonisjs/client/cms.d.ts (by an Adonis init hook, like indexPages)
 import type home from '#cms/pages/home'
-declare module '@martipops/cms-vue' {
+declare module '@sonata/cms-vue' {
   interface CmsPages {
     home: typeof home
   }
@@ -467,7 +467,7 @@ export default defineCmsPlugin({
   fieldTypes: [seoType],
   routes: (router) => router.get('sitemap.xml', …),
   hooks: { afterCommit: purgeSitemapCache },
-  client: () => import('@martipops/cms-seo/client'), // registers field editors, toolbar items, panels
+  client: () => import('@sonata/cms-seo/client'), // registers field editors, toolbar items, panels
 })
 ```
 
@@ -506,7 +506,7 @@ Client plugins can add toolbar buttons, panel tabs (like "SEO" next to "Content"
 
 ## Horizon 4 · Restaurant pack
 
-A vertical plugin (`@martipops/cms-restaurant`) that turns the generic CMS into a restaurant site kit. It's a separate package, so the core stays generic.
+A vertical plugin (`@sonata/cms-restaurant`) that turns the generic CMS into a restaurant site kit. It's a separate package, so the core stays generic.
 
 ### Structured menu
 

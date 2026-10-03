@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type SlotsType } from 'vue'
-import type { JsonValue } from '@martipops/cms-core'
+import type { JsonValue } from '@sonata/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import {
   canEditPage,

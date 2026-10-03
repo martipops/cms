@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import { defaultsOf, type JsonValue, type ListField } from '@martipops/cms-core'
+import { defaultsOf, type JsonValue, type ListField } from '@sonata/cms-core'
 import { registry } from '../options.js'
 import UButton from '@nuxt/ui/components/Button.vue'
 import UCollapsible from '@nuxt/ui/components/Collapsible.vue'

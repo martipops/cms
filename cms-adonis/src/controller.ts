@@ -1,6 +1,6 @@
 import vine from '@vinejs/vine'
 import type { HttpContext } from '@adonisjs/core/http'
-import type { CommitOp } from '@martipops/cms-core'
+import type { CommitOp } from '@sonata/cms-core'
 import { CommitValidationError } from './cms.js'
 
 const commitValidator = vine.create({

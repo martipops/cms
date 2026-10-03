@@ -1,7 +1,7 @@
 import vine from '@vinejs/vine'
 import type { FieldContext } from '@vinejs/compiler/types'
 import type { SchemaTypes } from '@vinejs/vine/types'
-import type { Field } from '@martipops/cms-core'
+import type { Field } from '@sonata/cms-core'
 import type { CmsConfig } from './types.js'
 
 /**

@@ -13,13 +13,13 @@ Today this is manual: about 15 minutes on a fresh Adonis + Inertia + Vue + Nuxt 
 **1. Install the packages.** While they live in this repo, copy `packages/` and add `"workspaces": ["packages/*"]`. Once published:
 
 ```sh
-npm i @martipops/cms-core @martipops/cms-adonis @martipops/cms-vue
+npm i @sonata/cms-core @sonata/cms-adonis @sonata/cms-vue
 ```
 
 **2. 🤖 Register the provider** in `adonisrc.ts`:
 
 ```ts
-providers: [/* … */ () => import('@martipops/cms-adonis/cms_provider')]
+providers: [/* … */ () => import('@sonata/cms-adonis/cms_provider')]
 ```
 
 **3. 🤖 Create the tables.** Copy `database/migrations/*_create_cms_tables.ts` from this repo.

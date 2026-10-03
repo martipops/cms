@@ -18,7 +18,7 @@ It was built for a client site and is developed inside that repo as npm workspac
 
 ```ts
 // app/cms/pages/home.ts
-import { f, definePage, section } from '@martipops/cms-core'
+import { f, definePage, section } from '@sonata/cms-core'
 
 export default definePage('home', {
   hero: section('Hero', {

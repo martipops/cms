@@ -1,5 +1,5 @@
 {
-  "name": "@martipops/cms-vue",
+  "name": "@sonata/cms-vue",
   "version": "0.0.0",
   "private": true,
   "description": "Edit mode for Inertia + Vue sites built with Nuxt UI: sections, collections, slide-out forms",
@@ -12,7 +12,7 @@
     "src"
   ],
   "dependencies": {
-    "@martipops/cms-core": "*"
+    "@sonata/cms-core": "*"
   },
   "peerDependencies": {
     "@inertiajs/vue3": "^2.0.0",

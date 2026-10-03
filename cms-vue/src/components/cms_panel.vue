@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue'
-import type { JsonValue, Section } from '@martipops/cms-core'
+import type { JsonValue, Section } from '@sonata/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import USlideover from '@nuxt/ui/components/Slideover.vue'
 import {

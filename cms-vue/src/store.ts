@@ -11,7 +11,7 @@ import {
   type PageProps,
   type Revision,
   type Section,
-} from '@martipops/cms-core'
+} from '@sonata/cms-core'
 import { api, ApiError } from './http.js'
 import { options } from './options.js'
 

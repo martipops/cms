@@ -1,4 +1,4 @@
-# @martipops/cms-vue
+# @sonata/cms-vue
 
 Edit mode for Inertia + Vue sites built with Nuxt UI. Sections and collections render with live drafts, slide-out forms are generated from schemas, and one toolbar saves everything in a single commit.
 

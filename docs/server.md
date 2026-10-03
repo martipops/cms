@@ -1,19 +1,19 @@
-# Server reference (`@martipops/cms-adonis`)
+# Server reference (`@sonata/cms-adonis`)
 
 ## Setup
 
 | Piece     | Where                                                                                                   |
 | --------- | ------------------------------------------------------------------------------------------------------- |
-| Provider  | `adonisrc.ts` → `() => import('@martipops/cms-adonis/cms_provider')`                                         |
+| Provider  | `adonisrc.ts` → `() => import('@sonata/cms-adonis/cms_provider')`                                         |
 | Config    | `config/cms.ts` (below)                                                                                 |
 | Routes    | `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`              |
 | Migration | Creates `cms_sections`, `cms_documents`, `cms_revisions`, `cms_seeds` (see [installing](installing.md)) |
-| Service   | `import cms from '@martipops/cms-adonis/services/main'`                                                      |
+| Service   | `import cms from '@sonata/cms-adonis/services/main'`                                                      |
 
 ## `config/cms.ts`
 
 ```ts
-import { defineConfig } from '@martipops/cms-adonis'
+import { defineConfig } from '@sonata/cms-adonis'
 
 export default defineConfig({
   pages: [site, home, about], // definePage results
@@ -109,8 +109,8 @@ User columns are plain strings with no foreign key, so the package makes no assu
 ## Testing
 
 ```ts
-import cms from '@martipops/cms-adonis/services/main'
-import { Cms, CommitValidationError, defineConfig } from '@martipops/cms-adonis'
+import cms from '@sonata/cms-adonis/services/main'
+import { Cms, CommitValidationError, defineConfig } from '@sonata/cms-adonis'
 
 test.group('…', (group) => {
   group.each.setup(() => {

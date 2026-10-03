@@ -1,9 +1,9 @@
-# Client reference (`@martipops/cms-vue`)
+# Client reference (`@sonata/cms-vue`)
 
 ## The plugin
 
 ```ts
-import cms from '@martipops/cms-vue'
+import cms from '@sonata/cms-vue'
 
 createApp(…)
   .use(ui)                          // Nuxt UI must be installed first
@@ -20,7 +20,7 @@ It registers `CmsPage`, `CmsSection`, `CmsCollection` and `CmsToolbar` globally.
 **Tailwind:** the package ships `.vue` source, so Tailwind must scan it:
 
 ```css
-@source '../../packages/cms-vue/src'; /* or node_modules/@martipops/cms-vue/src once published */
+@source '../../packages/cms-vue/src'; /* or node_modules/@sonata/cms-vue/src once published */
 ```
 
 **Media picker contract.** Props: `open`, `folder` (`images` / `pdfs` / …), `title`. Emits: `update:open`, and `select` with `{ key, url }`.

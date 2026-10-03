@@ -1,6 +1,6 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { SchemaTypes } from '@vinejs/vine/types'
-import type { Collection, CustomField, JsonValue, Page } from '@martipops/cms-core'
+import type { Collection, CustomField, JsonValue, Page } from '@sonata/cms-core'
 
 /**
  * A site-specific field type, used with `f.custom(name, …)` in schemas. The
