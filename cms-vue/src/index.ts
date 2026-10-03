@@ -32,6 +32,8 @@ export {
   canEditPage,
   canEditCollection,
   openPanel,
+  registerPage,
+  registerCollection,
   type Item,
   type Panel,
 } from './store.js'

@@ -1,5 +1,6 @@
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, type SlotsType } from 'vue'
+import type { JsonValue } from '@martipops/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import {
   canEditPage,
@@ -46,6 +47,9 @@ export default defineComponent({
       default: 'top-2 right-2',
     },
   },
+  slots: Object as SlotsType<{
+    default: { data: Record<string, JsonValue>; edit: () => void; editable: boolean }
+  }>,
   computed: {
     pageName(): string {
       const name = this.page ?? (this.cmsPage as (() => string) | null)?.()
@@ -53,7 +57,7 @@ export default defineComponent({
         throw new Error(`<CmsSection name="${this.name}"> needs a <CmsPage> or a page prop`)
       return name
     },
-    data() {
+    data(): Record<string, JsonValue> {
       return sectionValues(this.pageName, this.name)
     },
     label(): string {

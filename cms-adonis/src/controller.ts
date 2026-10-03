@@ -38,7 +38,10 @@ export default class CmsController {
     const cms = await ctx.containerResolver.make('cms')
     if (!(await cms.canEdit(ctx))) return ctx.response.forbidden({ message: 'Not allowed' })
 
-    const { ops } = await commitValidator.validate(ctx.request.body())
+    // The raw body, since the app's bodyparser may turn "" into null and
+    // clearing a text field is a legitimate edit
+    const raw = ctx.request.raw()
+    const { ops } = await commitValidator.validate(raw ? JSON.parse(raw) : ctx.request.body())
     try {
       return await cms.commit(ops as unknown as CommitOp[], cms.config.user(ctx))
     } catch (error) {

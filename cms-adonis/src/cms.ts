@@ -47,6 +47,12 @@ export class CommitValidationError extends Exception {
 
 type SectionValues = Record<string, Record<string, JsonValue>>
 
+/** Reports a problem with an op, at a field path ("" for the op itself) */
+type Fail = (path: string, message: string) => void
+
+/** A validated op's database writes, run inside the commit's transaction */
+type Write = (trx: TransactionClientContract) => Promise<void>
+
 const now = () => new Date().toISOString()
 const parse = (json: string | null) => (json === null ? null : JSON.parse(json))
 
@@ -257,58 +263,48 @@ export class Cms {
   /**
    * Applies a batch of changes in one transaction. If any op is invalid,
    * nothing is saved and every problem is reported.
+   *
+   * Runs in two passes: every op is read and validated first, outside the
+   * transaction (validators may query the database, and SQLite has a single
+   * connection), then all writes happen in one transaction.
    */
   async commit(ops: CommitOp[], user: CmsUser | null): Promise<CommitResponse> {
     const errors: CommitError[] = []
     const created: CommitResponse['created'] = {}
     const touchedPages = new Set<string>()
     const touchedCollections = new Set<string>()
+    const writes: Write[] = []
 
-    for (const op of ops) {
-      if (op.type === 'section.save') this.page(op.page)
-      else {
-        await this.#ensureSeeded(op.collection)
-        touchedCollections.add(op.collection)
+    for (const [index, op] of ops.entries()) {
+      const fail: Fail = (path, message) => errors.push({ op: index, path, message })
+      let write: Write | undefined
+      switch (op.type) {
+        case 'section.save':
+          touchedPages.add(op.page)
+          write = await this.#prepareSection(op, user, fail)
+          break
+        case 'doc.create':
+        case 'doc.update':
+        case 'doc.delete':
+        case 'doc.reorder':
+          this.collection(op.collection)
+          await this.#ensureSeeded(op.collection)
+          touchedCollections.add(op.collection)
+          if (op.type === 'doc.create') write = await this.#prepareCreate(op, user, created, fail)
+          if (op.type === 'doc.update') write = await this.#prepareUpdate(op, user, fail)
+          if (op.type === 'doc.delete') write = this.#prepareDelete(op, user, fail)
+          if (op.type === 'doc.reorder') write = this.#prepareReorder(op, index, created, fail)
+          break
+        default:
+          fail('', 'Unknown operation')
       }
+      if (write) writes.push(write)
     }
-
-    const fail = (op: number, path: string, message: string) => {
-      errors.push({ op, path, message })
-    }
+    if (errors.length) throw new CommitValidationError(errors)
 
     await db
       .transaction(async (trx) => {
-        for (const [index, op] of ops.entries()) {
-          switch (op.type) {
-            case 'section.save':
-              touchedPages.add(op.page)
-              await this.#saveSection(trx, op, user, (path, message) => fail(index, path, message))
-              break
-            case 'doc.create': {
-              const result = await this.#createDocument(trx, op, user, (path, message) =>
-                fail(index, path, message)
-              )
-              if (result) created[op.ref] = result
-              break
-            }
-            case 'doc.update':
-              await this.#updateDocument(trx, op, user, (path, message) =>
-                fail(index, path, message)
-              )
-              break
-            case 'doc.delete':
-              await this.#deleteDocument(trx, op, user, (path, message) =>
-                fail(index, path, message)
-              )
-              break
-            case 'doc.reorder':
-              await this.#reorder(trx, op, created, (path, message) => fail(index, path, message))
-              break
-            default:
-              fail(index, '', 'Unknown operation')
-          }
-        }
-        if (errors.length) throw new CommitValidationError(errors)
+        for (const write of writes) await write(trx)
       })
       .finally(() => {
         for (const page of touchedPages) this.#sections.delete(page)
@@ -318,70 +314,68 @@ export class Cms {
     return { created }
   }
 
-  async #saveSection(
-    trx: TransactionClientContract,
+  async #prepareSection(
     op: Extract<CommitOp, { type: 'section.save' }>,
     user: CmsUser | null,
-    fail: (path: string, message: string) => void
-  ) {
+    fail: Fail
+  ): Promise<Write | undefined> {
     const section: Section | undefined = this.page(op.page).sections[op.section]
-    if (!section) return fail('', `Unknown section "${op.page}.${op.section}"`)
+    if (!section) return void fail('', `Unknown section "${op.page}.${op.section}"`)
 
     const changes = op.changes ?? {}
     const reset = op.reset ?? []
-    const toValidate: Record<string, Field> = {}
     for (const key of [...Object.keys(changes), ...reset]) {
-      if (!section.fields[key]) return fail(key, `Unknown field "${key}"`)
+      if (!section.fields[key]) return void fail(key, `Unknown field "${key}"`)
     }
+    const toValidate: Record<string, Field> = {}
     for (const key of Object.keys(changes)) toValidate[key] = section.fields[key]
 
     const validated = await this.#validate(toValidate, changes, fail)
     if (!validated) return
 
-    const row = await trx
-      .from(TABLES.sections)
-      .where({ page: op.page, section: op.section })
-      .first()
-    const data: Record<string, JsonValue> = { ...(parse(row?.data ?? null) ?? {}) }
-    for (const key of reset) delete data[key]
-    for (const key of Object.keys(changes)) data[key] = validated[key]
+    return async (trx) => {
+      const where = { page: op.page, section: op.section }
+      const row = await trx.from(TABLES.sections).where(where).first()
+      const data: Record<string, JsonValue> = { ...(parse(row?.data ?? null) ?? {}) }
+      for (const key of reset) delete data[key]
+      Object.assign(data, validated)
 
-    const json = JSON.stringify(data)
-    if (!Object.keys(data).length) {
-      await trx.from(TABLES.sections).where({ page: op.page, section: op.section }).delete()
-    } else if (row) {
-      await trx
-        .from(TABLES.sections)
-        .where('id', row.id)
-        .update({ data: json, updated_by: user?.id ?? null, updated_at: now() })
-    } else {
-      await trx.table(TABLES.sections).insert({
-        page: op.page,
-        section: op.section,
+      const json = JSON.stringify(data)
+      if (!Object.keys(data).length) {
+        await trx.from(TABLES.sections).where(where).delete()
+      } else if (row) {
+        await trx
+          .from(TABLES.sections)
+          .where('id', row.id)
+          .update({ data: json, updated_by: user?.id ?? null, updated_at: now() })
+      } else {
+        await trx.table(TABLES.sections).insert({
+          ...where,
+          data: json,
+          updated_by: user?.id ?? null,
+          created_at: now(),
+          updated_at: now(),
+        })
+      }
+
+      await this.#revision(trx, user, {
+        kind: 'section',
+        target: `${op.page}.${op.section}`,
+        action: 'save',
         data: json,
-        updated_by: user?.id ?? null,
-        created_at: now(),
-        updated_at: now(),
+        hidden: null,
       })
     }
-
-    await this.#revision(trx, user, {
-      kind: 'section',
-      target: `${op.page}.${op.section}`,
-      action: 'save',
-      data: json,
-      hidden: null,
-    })
   }
 
-  async #createDocument(
-    trx: TransactionClientContract,
+  async #prepareCreate(
     op: Extract<CommitOp, { type: 'doc.create' }>,
     user: CmsUser | null,
-    fail: (path: string, message: string) => void
-  ) {
+    created: CommitResponse['created'],
+    fail: Fail
+  ): Promise<Write | undefined> {
     const collection = this.collection(op.collection)
-    if (!collection.allow.create) return fail('', `${collection.labelPlural} can't be added`)
+    if (!collection.allow.create) return void fail('', `${collection.labelPlural} can't be added`)
 
     const data = await this.#validate(
       collection.fields,
@@ -390,57 +384,58 @@ export class Cms {
     )
     if (!data) return
 
-    const last = await trx
-      .from(TABLES.documents)
-      .where('collection', collection.name)
-      .max('sort_order as max')
-      .first()
-    const slug = await this.#uniqueSlug(trx, collection, data)
-    const json = JSON.stringify(data)
+    return async (trx) => {
+      const last = await trx
+        .from(TABLES.documents)
+        .where('collection', collection.name)
+        .max('sort_order as max')
+        .first()
+      const slug = await this.#uniqueSlug(trx, collection, data)
+      const json = JSON.stringify(data)
 
-    const [inserted] = await trx
-      .table(TABLES.documents)
-      .insert({
-        collection: collection.name,
-        slug,
+      const [inserted] = await trx
+        .table(TABLES.documents)
+        .insert({
+          collection: collection.name,
+          slug,
+          data: json,
+          sort_order: (last?.max ?? -1) + 1,
+          hidden: false,
+          created_by: user?.id ?? null,
+          updated_by: user?.id ?? null,
+          created_at: now(),
+          updated_at: now(),
+        })
+        .returning('id')
+      const id = Number(typeof inserted === 'object' ? inserted.id : inserted)
+      created[op.ref] = { id, slug }
+
+      await this.#revision(trx, user, {
+        kind: 'document',
+        target: `${collection.name}:${id}`,
+        action: 'create',
         data: json,
-        sort_order: (last?.max ?? -1) + 1,
         hidden: false,
-        created_by: user?.id ?? null,
-        updated_by: user?.id ?? null,
-        created_at: now(),
-        updated_at: now(),
       })
-      .returning('id')
-    const id = typeof inserted === 'object' ? inserted.id : inserted
-
-    await this.#revision(trx, user, {
-      kind: 'document',
-      target: `${collection.name}:${id}`,
-      action: 'create',
-      data: json,
-      hidden: false,
-    })
-    return { id: Number(id), slug }
+    }
   }
 
-  async #updateDocument(
-    trx: TransactionClientContract,
+  async #prepareUpdate(
     op: Extract<CommitOp, { type: 'doc.update' }>,
     user: CmsUser | null,
-    fail: (path: string, message: string) => void
-  ) {
+    fail: Fail
+  ): Promise<Write | undefined> {
     const collection = this.collection(op.collection)
-    const row = await trx
+    const row = await db
       .from(TABLES.documents)
       .where({ collection: collection.name, id: op.id })
       .first()
-    if (!row) return fail('', `This ${collection.label.toLowerCase()} no longer exists`)
+    if (!row) return void fail('', `This ${collection.label.toLowerCase()} no longer exists`)
 
     let data = parse(row.data)
     if (op.data) {
       for (const key of Object.keys(op.data)) {
-        if (!collection.fields[key]) return fail(key, `Unknown field "${key}"`)
+        if (!collection.fields[key]) return void fail(key, `Unknown field "${key}"`)
       }
       const validated = await this.#validate(
         collection.fields,
@@ -453,71 +448,90 @@ export class Cms {
 
     let hidden = Boolean(row.hidden)
     if (op.hidden !== undefined && op.hidden !== hidden) {
-      if (!collection.allow.hide) return fail('', `${collection.labelPlural} can't be hidden`)
+      if (!collection.allow.hide) return void fail('', `${collection.labelPlural} can't be hidden`)
       hidden = op.hidden
     }
 
-    const json = JSON.stringify(data)
-    await trx
-      .from(TABLES.documents)
-      .where('id', row.id)
-      .update({ data: json, hidden, updated_by: user?.id ?? null, updated_at: now() })
+    return async (trx) => {
+      const json = JSON.stringify(data)
+      await trx
+        .from(TABLES.documents)
+        .where('id', row.id)
+        .update({ data: json, hidden, updated_by: user?.id ?? null, updated_at: now() })
 
-    await this.#revision(trx, user, {
-      kind: 'document',
-      target: `${collection.name}:${row.id}`,
-      action: 'save',
-      data: json,
-      hidden,
-    })
+      await this.#revision(trx, user, {
+        kind: 'document',
+        target: `${collection.name}:${row.id}`,
+        action: 'save',
+        data: json,
+        hidden,
+      })
+    }
   }
 
-  async #deleteDocument(
-    trx: TransactionClientContract,
+  #prepareDelete(
     op: Extract<CommitOp, { type: 'doc.delete' }>,
     user: CmsUser | null,
-    fail: (path: string, message: string) => void
-  ) {
+    fail: Fail
+  ): Write | undefined {
     const collection = this.collection(op.collection)
-    if (!collection.allow.delete) return fail('', `${collection.labelPlural} can't be deleted`)
-
-    const deleted = await trx
-      .from(TABLES.documents)
-      .where({ collection: collection.name, id: op.id })
-      .delete()
-    if (!deleted) return
-
-    await this.#revision(trx, user, {
-      kind: 'document',
-      target: `${collection.name}:${op.id}`,
-      action: 'delete',
-      data: null,
-      hidden: null,
-    })
-  }
-
-  async #reorder(
-    trx: TransactionClientContract,
-    op: Extract<CommitOp, { type: 'doc.reorder' }>,
-    created: CommitResponse['created'],
-    fail: (path: string, message: string) => void
-  ) {
-    const collection = this.collection(op.collection)
-    if (!collection.allow.reorder) return fail('', `${collection.labelPlural} can't be reordered`)
-
-    const ids = op.ids.map((id) => (typeof id === 'string' ? created[id]?.id : id))
-    const rows = await trx.from(TABLES.documents).where('collection', collection.name).select('id')
-    const existing = new Set(rows.map((row: { id: number }) => Number(row.id)))
-
-    if (ids.length !== existing.size || !ids.every((id) => id !== undefined && existing.has(id))) {
-      return fail(
-        '',
-        `The list of ${collection.labelPlural.toLowerCase()} changed. Reload and try again`
-      )
+    if (!collection.allow.delete) {
+      return void fail('', `${collection.labelPlural} can't be deleted`)
     }
 
-    for (const [order, id] of ids.entries()) {
-      await trx.from(TABLES.documents).where('id', id!).update({ sort_order: order })
+    return async (trx) => {
+      const deleted = await trx
+        .from(TABLES.documents)
+        .where({ collection: collection.name, id: op.id })
+        .delete()
+      if (!deleted) return
+
+      await this.#revision(trx, user, {
+        kind: 'document',
+        target: `${collection.name}:${op.id}`,
+        action: 'delete',
+        data: null,
+        hidden: null,
+      })
+    }
+  }
+
+  #prepareReorder(
+    op: Extract<CommitOp, { type: 'doc.reorder' }>,
+    index: number,
+    created: CommitResponse['created'],
+    fail: Fail
+  ): Write | undefined {
+    const collection = this.collection(op.collection)
+    if (!collection.allow.reorder) {
+      return void fail('', `${collection.labelPlural} can't be reordered`)
+    }
+
+    return async (trx) => {
+      // New items only have ids once the creates earlier in this commit ran
+      const ids = op.ids.map((id) => (typeof id === 'string' ? created[id]?.id : id))
+      const rows = await trx
+        .from(TABLES.documents)
+        .where('collection', collection.name)
+        .select('id')
+      const existing = new Set(rows.map((row: { id: number }) => Number(row.id)))
+
+      if (
+        ids.length !== existing.size ||
+        !ids.every((id) => id !== undefined && existing.has(id))
+      ) {
+        throw new CommitValidationError([
+          {
+            op: index,
+            path: '',
+            message: `The list of ${collection.labelPlural.toLowerCase()} changed. Reload and try again`,
+          },
+        ])
+      }
+
+      for (const [order, id] of ids.entries()) {
+        await trx.from(TABLES.documents).where('id', id!).update({ sort_order: order })
+      }
     }
   }
 
@@ -525,7 +539,7 @@ export class Cms {
   async #validate(
     fields: Record<string, Field>,
     data: Record<string, unknown>,
-    fail: (path: string, message: string) => void
+    fail: Fail
   ): Promise<Record<string, JsonValue> | null> {
     try {
       return (await vine.validate({

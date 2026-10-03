@@ -1,5 +1,5 @@
 <script lang="ts">
-import { defineComponent, type PropType } from 'vue'
+import { defineComponent, type PropType, type SlotsType } from 'vue'
 import type { CollectionProps } from '@martipops/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import {
@@ -42,6 +42,9 @@ export default defineComponent({
       default: false,
     },
   },
+  slots: Object as SlotsType<{
+    default: { items: Item[]; all: Item[]; edit: (item?: Item) => void; editable: boolean }
+  }>,
   computed: {
     name(): string {
       return this.collection.name
