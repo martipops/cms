@@ -22,7 +22,12 @@ npm i @sonata/cms-core @sonata/cms-adonis @sonata/cms-vue
 providers: [/* … */ () => import('@sonata/cms-adonis/cms_provider')]
 ```
 
-**3. 🤖 Create the tables.** Copy `database/migrations/*_create_cms_tables.ts` from this repo.
+**3. 🤖 Create the tables.** `node ace make:migration create_cms_tables`, then call the package's schema step from it (see [server reference](server.md#tables)):
+
+```ts
+async up() { cmsTablesV1.up(this.schema) }
+async down() { cmsTablesV1.down(this.schema) }
+```
 
 **4. 🤖 Create `config/cms.ts`.** Start with no pages:
 

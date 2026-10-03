@@ -26,17 +26,8 @@ import {
   type Section,
 } from '@sonata/cms-core'
 import { SchemaCompiler } from './validation.js'
+import { cmsTables } from './tables.js'
 import type { CmsConfig, CmsUser, StoredDocument } from './types.js'
-
-/** Names of the CMS tables for a prefix (config `tablePrefix`) */
-export function cmsTables(prefix = 'cms_') {
-  return {
-    sections: `${prefix}sections`,
-    documents: `${prefix}documents`,
-    revisions: `${prefix}revisions`,
-    seeds: `${prefix}seeds`,
-  }
-}
 
 /** Thrown by `commit()` when any op is invalid; nothing is saved */
 export class CommitValidationError extends Exception {

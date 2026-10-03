@@ -82,5 +82,5 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 ## Working on the library
 
 - `npm run dev` from the app root builds `cms-core` and `cms-adonis` in watch mode next to the dev server. `cms-vue` ships as `.vue` source, which the app's Vite compiles.
-- `npm test` covers the library (`tests/unit/cms_core.spec.ts`, `tests/functional/cms.spec.ts`) and the site's use of it.
+- Each package has its own suite: `npm test -w @sonata/cms-core` (pure functions) and `npm test -w @sonata/cms-adonis` (a minimal app on in-memory SQLite). Neither needs anything from the site. The root `npm test` runs both, then the site's own tests.
 - Any change to the commit protocol must update [protocol.md](docs/protocol.md) and both packages in the same commit.

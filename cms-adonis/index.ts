@@ -1,4 +1,6 @@
-export { Cms, CommitValidationError, cmsTables } from './src/cms.js'
+export { Cms, CommitValidationError } from './src/cms.js'
+export { cmsTables } from './src/tables.js'
+export { cmsTablesV1 } from './src/schema.js'
 export { defineConfig, defineFieldType } from './src/define_config.js'
 export { registerCmsRoutes } from './src/routes.js'
 export { SchemaCompiler } from './src/validation.js'

@@ -103,6 +103,22 @@ The commit endpoint parses the **raw JSON body**. Adonis's bodyparser setting `c
 
 ## Tables
 
+Create them from a migration that calls the package's versioned schema step. A released version never changes; a future schema change ships as `cmsTablesV2`, added as a new migration:
+
+```ts
+import { BaseSchema } from '@adonisjs/lucid/schema'
+import { cmsTablesV1 } from '@sonata/cms-adonis/schema'
+
+export default class extends BaseSchema {
+  async up() {
+    cmsTablesV1.up(this.schema) // or (this.schema, 'site_') to match tablePrefix
+  }
+  async down() {
+    cmsTablesV1.down(this.schema)
+  }
+}
+```
+
 | Table           | Key columns                                                                                                                | Notes                                                            |
 | --------------- | -------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | `cms_sections`  | `page`, `section` (unique together), `data` JSON                                                                           | Only edited fields. The row is deleted when all fields are reset |
@@ -126,6 +142,6 @@ test.group('…', (group) => {
 })
 ```
 
-- To test the library in isolation, build a `new Cms(defineConfig({ … }))` with throwaway schemas (see `tests/functional/cms.spec.ts`).
-- Tests share the dev SQLite file. Don't assert absolute row counts in shared tables; scope assertions to what the test created.
+- To test the library in isolation, build a `new Cms(defineConfig({ … }))` with throwaway schemas, as the package's own suite does (`packages/cms-adonis/tests/cms.spec.ts`). It boots a minimal app on in-memory SQLite (`tests/app.ts`) and needs nothing from the site.
+- An app's tests usually share its dev SQLite file. There, don't assert absolute row counts in shared tables; scope assertions to what the test created.
 - ⚠️ A global transaction hides connection problems, because everything runs on one connection. Code that opens its own connection inside a transaction can pass the tests and deadlock in production. The two-pass commit exists because of exactly this. Hit the real endpoint before you trust a change to the write path.
