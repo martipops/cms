@@ -2,6 +2,7 @@
 import { defineComponent, type PropType } from 'vue'
 import type { GroupField, JsonValue } from '@martipops/cms-core'
 import { registry } from '../options.js'
+import { errorsUnder } from '../errors.js'
 
 /** Editor for a group field: its child fields in a bordered box */
 export default defineComponent({
@@ -29,11 +30,7 @@ export default defineComponent({
   },
   methods: {
     errorsFor(prefix: string) {
-      return Object.fromEntries(
-        Object.entries(this.errors)
-          .filter(([path]) => path === prefix || path.startsWith(`${prefix}.`))
-          .map(([path, message]) => [path.slice(prefix.length + 1), message])
-      )
+      return errorsUnder(this.errors, prefix)
     },
     update(key: string, value: JsonValue) {
       this.$emit('update:modelValue', { ...this.modelValue, [key]: value })

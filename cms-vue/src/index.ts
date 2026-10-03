@@ -1,5 +1,6 @@
 import type { App } from 'vue'
 import { configure, registry, type CmsVueOptions } from './options.js'
+export { mediaUrl } from './options.js'
 import CmsPage from './components/cms_page.vue'
 import CmsSection from './components/cms_section.vue'
 import CmsCollection from './components/cms_collection.vue'

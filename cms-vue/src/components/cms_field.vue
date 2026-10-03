@@ -10,7 +10,7 @@ import UInputNumber from '@nuxt/ui/components/InputNumber.vue'
 import USelectMenu from '@nuxt/ui/components/SelectMenu.vue'
 import USwitch from '@nuxt/ui/components/Switch.vue'
 import UTextarea from '@nuxt/ui/components/Textarea.vue'
-import { options } from '../options.js'
+import { mediaUrl, options } from '../options.js'
 import CmsFieldGroup from './cms_field_group.vue'
 import CmsFieldList from './cms_field_list.vue'
 
@@ -78,9 +78,7 @@ export default defineComponent({
       return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
     },
     mediaSrc(): string | null {
-      return typeof this.modelValue === 'string' && this.modelValue
-        ? options.mediaUrl(this.modelValue)
-        : null
+      return typeof this.modelValue === 'string' ? mediaUrl(this.modelValue) : null
     },
     selectItems() {
       if (this.field.type !== 'select' && this.field.type !== 'icon') return []

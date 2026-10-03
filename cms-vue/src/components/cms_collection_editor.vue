@@ -18,6 +18,7 @@ import {
   type Item,
 } from '../store.js'
 import CmsField from './cms_field.vue'
+import { errorsUnder } from '../errors.js'
 
 /**
  * Panel body for a collection: every item as a collapsible form, plus add,
@@ -80,11 +81,7 @@ export default defineComponent({
       return Object.keys(this.errors(item)).length > 0
     },
     fieldErrors(item: Item, key: string) {
-      return Object.fromEntries(
-        Object.entries(this.errors(item))
-          .filter(([path]) => path === key || path.startsWith(`${key}.`))
-          .map(([path, message]) => [path.slice(key.length + 1), message])
-      )
+      return errorsUnder(this.errors(item), key)
     },
     update(item: Item, key: string, value: JsonValue) {
       setItemField(this.collection, item.key, key, value)

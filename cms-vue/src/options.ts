@@ -30,3 +30,8 @@ export function configure(input: CmsVueOptions) {
  * CmsFields). Linked at install time to keep their types non-circular.
  */
 export const registry: { field: Component | null } = { field: null }
+
+/** Public URL of a media key (null for none) */
+export function mediaUrl(key: string | null | undefined) {
+  return key ? options.mediaUrl(key) : null
+}

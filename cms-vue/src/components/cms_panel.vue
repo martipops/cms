@@ -13,6 +13,7 @@ import {
 } from '../store.js'
 import CmsField from './cms_field.vue'
 import CmsCollectionEditor from './cms_collection_editor.vue'
+import { errorsUnder } from '../errors.js'
 
 /**
  * The slide-out editor. Shows the form for whatever `editor.panel` points
@@ -71,11 +72,7 @@ export default defineComponent({
   },
   methods: {
     fieldErrors(key: string) {
-      return Object.fromEntries(
-        Object.entries(this.errors)
-          .filter(([path]) => path === key || path.startsWith(`${key}.`))
-          .map(([path, message]) => [path.slice(key.length + 1), message])
-      )
+      return errorsUnder(this.errors, key)
     },
     update(key: string, value: JsonValue) {
       if (this.section) setSectionField(this.section.page, this.section.name, key, value)

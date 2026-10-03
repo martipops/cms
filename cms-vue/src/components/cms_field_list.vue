@@ -5,6 +5,7 @@ import { registry } from '../options.js'
 import UButton from '@nuxt/ui/components/Button.vue'
 import UCollapsible from '@nuxt/ui/components/Collapsible.vue'
 import UIcon from '@nuxt/ui/components/Icon.vue'
+import { errorsUnder } from '../errors.js'
 
 type Item = Record<string, JsonValue>
 
@@ -65,12 +66,7 @@ export default defineComponent({
       return Object.keys(this.errors).some((path) => path.startsWith(`${index}.`))
     },
     itemErrors(index: number, key: string) {
-      const prefix = `${index}.${key}`
-      return Object.fromEntries(
-        Object.entries(this.errors)
-          .filter(([path]) => path === prefix || path.startsWith(`${prefix}.`))
-          .map(([path, message]) => [path.slice(prefix.length + 1), message])
-      )
+      return errorsUnder(this.errors, `${index}.${key}`)
     },
     update(index: number, key: string, value: JsonValue) {
       this.$emit(
