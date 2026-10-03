@@ -61,7 +61,7 @@ router
 **7. 🤖 Let Tailwind see the components** (`inertia/css/app.css`):
 
 ```css
-@source '../../packages/cms-vue/src';
+@import '@sonata/cms-vue/tailwind.css'; /* after @nuxt/ui */
 ```
 
 **8. Add the toolbar** to the layout for signed-in users:

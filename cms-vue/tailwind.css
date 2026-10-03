@@ -1,0 +1,9 @@
+/*
+ * Lets Tailwind see the classes edit mode uses. Import it after Tailwind and
+ * Nuxt UI:
+ *
+ *   @import 'tailwindcss';
+ *   @import '@nuxt/ui';
+ *   @import '@sonata/cms-vue/tailwind.css';
+ */
+@source './src';

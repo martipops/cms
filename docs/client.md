@@ -18,10 +18,12 @@ createApp(…)
 
 It registers `CmsPage`, `CmsSection`, `CmsCollection` and `CmsToolbar` globally. With the Options API you can also import them by name for type checking.
 
-**Tailwind:** the package ships `.vue` source, so Tailwind must scan it:
+**Tailwind:** the components are styled with Tailwind classes, so Tailwind must scan them. Import the package's CSS entry after Nuxt UI; it points Tailwind at the components wherever the package is installed:
 
 ```css
-@source '../../packages/cms-vue/src'; /* or node_modules/@sonata/cms-vue/src once published */
+@import 'tailwindcss';
+@import '@nuxt/ui';
+@import '@sonata/cms-vue/tailwind.css';
 ```
 
 **Media picker contract.** Props: `open`, `folder` (a field's `folder`, or `linkFolder` for links), `title`. Emits: `update:open`, and `select` with `{ key, url }`.

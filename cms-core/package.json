@@ -1,6 +1,6 @@
 {
   "name": "@sonata/cms-core",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "private": true,
   "description": "Isomorphic schema DSL for the CMS: field definitions, sections, collections and value helpers",
   "type": "module",
@@ -25,5 +25,13 @@
     "@japa/runner": "^5.3.0",
     "@poppinss/ts-exec": "^1.4.4",
     "typescript": "~6.0.3"
-  }
+  },
+  "keywords": [
+    "cms",
+    "adonisjs",
+    "inertia",
+    "vue",
+    "nuxt-ui"
+  ],
+  "sideEffects": false
 }
