@@ -19,7 +19,7 @@ Things a second site needs before the library can be called reusable.
 
 ### Media module
 
-**Why.** Every site needs a media library, and today the CMS borrows the app's. That coupling is held together by two config callbacks (`mediaExists`, `mediaPicker`).
+**Why.** Every site needs a media library, and today the CMS borrows the app's. That coupling is held together by two config hooks (`media.exists`, `mediaPicker`).
 
 **Design.** Move `MediaService`, the controller, the model, the validators and `media_library.vue` / `media_picker_modal.vue` into the packages, behind a **storage adapter** built on Adonis Drive:
 
@@ -33,7 +33,7 @@ media: {
 }
 ```
 
-- `mediaExists` and the in-use check become internal. `registerCmsRoutes` also mounts the media routes.
+- `media.exists` and the in-use check become internal. `registerCmsRoutes` also mounts the media routes.
 - `cms-vue` ships `CmsMediaLibrary` and `CmsMediaPicker`, and the `mediaPicker` option becomes optional (an override).
 - **Responsive variants:** generate `-640w`, `-1280w` and `-2400w` WebP/AVIF files on upload, and add `<CmsImage :src="key" sizes="…">`, which renders `srcset`.
 - **Focal points:** `media.focal_x/focal_y`, set by clicking the image in the library. `CmsImage` turns them into `object-position`, so crops keep faces in frame on every breakpoint.

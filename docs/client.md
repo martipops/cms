@@ -12,6 +12,7 @@ createApp(…)
     mediaPicker: MediaPickerModal,  // optional; image/file fields need it
     fields: { weeklyHours: WeeklyHoursField },  // editors for custom field types
     mediaUrl: (key) => `/media/${key}`,          // optional; this is the default
+    linkFolder: 'files',            // optional; media folder link fields offer (false hides it)
   })
 ```
 
@@ -23,7 +24,7 @@ It registers `CmsPage`, `CmsSection`, `CmsCollection` and `CmsToolbar` globally.
 @source '../../packages/cms-vue/src'; /* or node_modules/@sonata/cms-vue/src once published */
 ```
 
-**Media picker contract.** Props: `open`, `folder` (`images` / `pdfs` / …), `title`. Emits: `update:open`, and `select` with `{ key, url }`.
+**Media picker contract.** Props: `open`, `folder` (a field's `folder`, or `linkFolder` for links), `title`. Emits: `update:open`, and `select` with `{ key, url }`.
 
 ## Components
 

@@ -10,8 +10,13 @@ export type CmsVueOptions = {
   mediaPicker?: Component
   /** Editor components for custom field types, by name */
   fields?: Record<string, Component>
-  /** Public URL of a media key */
+  /** Public URL of a media key. Default `/media/<key>` */
   mediaUrl?: (key: string) => string
+  /**
+   * Media folder link fields offer files from (fields can override it with
+   * `folder`). `false` hides the picker on links. Default "files"
+   */
+  linkFolder?: string | false
 }
 
 export const options: Required<Omit<CmsVueOptions, 'mediaPicker'>> &
@@ -19,6 +24,7 @@ export const options: Required<Omit<CmsVueOptions, 'mediaPicker'>> &
   endpoint: '/admin/cms',
   fields: {},
   mediaUrl: (key) => `/media/${key}`,
+  linkFolder: 'files',
 }
 
 export function configure(input: CmsVueOptions) {

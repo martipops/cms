@@ -76,23 +76,25 @@ export function resolveSection<S extends Section>(
   return normalizeFields(section.fields, stored) as SectionValues<S>
 }
 
-/** Public URL of a media library key */
-export function mediaUrl(key: string | null | undefined) {
-  return key ? `/media/${key}` : null
-}
-
-/** Media key a URL points at, if it's a media library URL */
-export function mediaKeyFromUrl(url: string) {
-  return url.startsWith('/media/') ? url.slice('/media/'.length) : null
+/** Media key a URL points at, if it's under the media base URL ("/media/") */
+export function mediaKeyFromUrl(url: string, baseUrl: string) {
+  return url.startsWith(baseUrl) ? url.slice(baseUrl.length) || null : null
 }
 
 export type CustomMediaKeys = (field: Field & { type: 'custom' }, value: unknown) => string[]
+
+export type MediaScan = {
+  /** Public base URL of media files; links and URLs under it count as references */
+  baseUrl: string
+  /** Media keys referenced by custom field types */
+  custom?: CustomMediaKeys
+}
 
 /**
  * Media keys a value references (used to protect images and files from
  * deletion in the media library). Custom field types report their own.
  */
-export function mediaKeysIn(field: Field, value: unknown, custom?: CustomMediaKeys): string[] {
+export function mediaKeysIn(field: Field, value: unknown, scan: MediaScan): string[] {
   if (value === null || value === undefined) return []
 
   switch (field.type) {
@@ -100,21 +102,21 @@ export function mediaKeysIn(field: Field, value: unknown, custom?: CustomMediaKe
     case 'file':
       return typeof value === 'string' ? [value] : []
     case 'link': {
-      const key = mediaKeyFromUrl((value as LinkValue).url ?? '')
+      const key = mediaKeyFromUrl((value as LinkValue).url ?? '', scan.baseUrl)
       return key ? [key] : []
     }
     case 'url': {
-      const key = typeof value === 'string' ? mediaKeyFromUrl(value) : null
+      const key = typeof value === 'string' ? mediaKeyFromUrl(value, scan.baseUrl) : null
       return key ? [key] : []
     }
     case 'group':
-      return mediaKeysInFields(field.fields, value as Record<string, unknown>, custom)
+      return mediaKeysInFields(field.fields, value as Record<string, unknown>, scan)
     case 'list':
       return Array.isArray(value)
-        ? value.flatMap((item) => mediaKeysInFields(field.item, item, custom))
+        ? value.flatMap((item) => mediaKeysInFields(field.item, item, scan))
         : []
     case 'custom':
-      return custom ? custom(field, value) : []
+      return scan.custom ? scan.custom(field, value) : []
     default:
       return []
   }
@@ -123,8 +125,8 @@ export function mediaKeysIn(field: Field, value: unknown, custom?: CustomMediaKe
 export function mediaKeysInFields(
   fields: Record<string, Field>,
   values: Record<string, unknown>,
-  custom?: CustomMediaKeys
+  scan: MediaScan
 ): string[] {
   if (!isObject(values)) return []
-  return Object.entries(fields).flatMap(([key, field]) => mediaKeysIn(field, values[key], custom))
+  return Object.entries(fields).flatMap(([key, field]) => mediaKeysIn(field, values[key], scan))
 }

@@ -16,6 +16,16 @@ export type FieldTypeDefinition = {
 
 export type CmsUser = { id: number | string; name: string | null }
 
+export type CmsMediaConfig = {
+  /** Whether a media library file exists (validates image and file fields) */
+  exists: (key: string, folder: string) => Promise<boolean>
+  /**
+   * Public base URL of media files. Links and URLs under it count as uses of
+   * that file. Default "/media/"
+   */
+  baseUrl: string
+}
+
 export type CmsConfig = {
   /** Pages and site-wide scopes (e.g. "site" for header/footer) */
   pages: Page<any>[]
@@ -25,13 +35,18 @@ export type CmsConfig = {
   authorize: (ctx: HttpContext) => boolean | Promise<boolean>
   /** The signed-in user, recorded on revisions */
   user: (ctx: HttpContext) => CmsUser | null
-  /** Whether a media library file exists (validates image and file fields) */
-  mediaExists: (key: string, folder: string) => Promise<boolean>
+  /** The media library. Required when any schema has image or file fields */
+  media: CmsMediaConfig | null
+  /** Prefix of the CMS tables. Default "cms_" */
+  tablePrefix: string
 }
 
-export type CmsConfigInput = Partial<Pick<CmsConfig, 'pages' | 'collections' | 'fieldTypes'>> &
-  Pick<CmsConfig, 'authorize' | 'mediaExists'> &
-  Partial<Pick<CmsConfig, 'user'>>
+export type CmsConfigInput = Partial<
+  Pick<CmsConfig, 'pages' | 'collections' | 'fieldTypes' | 'user' | 'tablePrefix'>
+> &
+  Pick<CmsConfig, 'authorize'> & {
+    media?: Pick<CmsMediaConfig, 'exists'> & Partial<CmsMediaConfig>
+  }
 
 export type StoredDocument = {
   id: number

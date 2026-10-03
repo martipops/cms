@@ -99,9 +99,16 @@ export default defineComponent({
         if (!open) this.picking = null
       },
     },
-    pickerFolder(): string {
-      if (this.picking === 'link') return 'pdfs'
-      return this.field.type === 'file' ? this.field.folder : 'images'
+    linkFolder(): string | null {
+      if (this.field.type !== 'link' || !options.mediaPicker) return null
+      return this.field.folder ?? (options.linkFolder || null)
+    },
+    pickerFolder(): string | null {
+      if (this.picking === 'link') return this.linkFolder
+      return this.field.type === 'image' || this.field.type === 'file' ? this.field.folder : null
+    },
+    pickerTitle(): string {
+      return this.field.type === 'image' ? 'Choose an image' : 'Choose a file'
     },
   },
   methods: {
@@ -233,13 +240,13 @@ export default defineComponent({
       <UFieldGroup class="w-full">
         <UInput
           :model-value="link.url"
-          placeholder="/page, /media/… or https://…"
+          placeholder="/page or https://…"
           class="w-full"
           @update:model-value="(value) => updateLink('url', value)"
         />
         <UButton
-          v-if="options.mediaPicker"
-          label="Choose PDF"
+          v-if="linkFolder"
+          label="Choose file"
           icon="i-lucide-file-text"
           color="neutral"
           variant="subtle"
@@ -278,10 +285,10 @@ export default defineComponent({
 
     <component
       :is="options.mediaPicker"
-      v-if="options.mediaPicker && picking"
+      v-if="options.mediaPicker && picking && pickerFolder"
       v-model:open="pickerOpen"
       :folder="pickerFolder"
-      :title="pickerFolder === 'images' ? 'Choose an image' : 'Choose a file'"
+      :title="pickerTitle"
       @select="picked"
     />
   </UFormField>

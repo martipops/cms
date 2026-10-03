@@ -2,13 +2,13 @@
 
 ## Setup
 
-| Piece     | Where                                                                                                   |
-| --------- | ------------------------------------------------------------------------------------------------------- |
-| Provider  | `adonisrc.ts` → `() => import('@sonata/cms-adonis/cms_provider')`                                         |
-| Config    | `config/cms.ts` (below)                                                                                 |
-| Routes    | `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`              |
-| Migration | Creates `cms_sections`, `cms_documents`, `cms_revisions`, `cms_seeds` (see [installing](installing.md)) |
-| Service   | `import cms from '@sonata/cms-adonis/services/main'`                                                      |
+| Piece     | Where                                                                                                                                        |
+| --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| Provider  | `adonisrc.ts` → `() => import('@sonata/cms-adonis/cms_provider')`                                                                            |
+| Config    | `config/cms.ts` (below)                                                                                                                      |
+| Routes    | `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`                                                   |
+| Migration | Creates `cms_sections`, `cms_documents`, `cms_revisions`, `cms_seeds`, or the same with your `tablePrefix` (see [installing](installing.md)) |
+| Service   | `import cms from '@sonata/cms-adonis/services/main'`                                                                                         |
 
 ## `config/cms.ts`
 
@@ -22,18 +22,24 @@ export default defineConfig({
 
   authorize: (ctx) => ctx.bouncer?.allows('manageContent') ?? false,
   user: ({ auth }) => (auth?.user ? { id: auth.user.id, name: auth.user.fullName } : null),
-  mediaExists: async (key, folder) => Boolean(await Media.query().where({ key, folder }).first()),
+  media: {
+    exists: async (key, folder) => Boolean(await Media.query().where({ key, folder }).first()),
+    baseUrl: '/media/', // optional; this is the default
+  },
 })
 ```
 
-| Option        | Required | Purpose                                                                                                              |
-| ------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
-| `pages`       |          | Editable pages and site-wide scopes                                                                                  |
-| `collections` |          | Editable collections                                                                                                 |
-| `fieldTypes`  |          | Custom field types used by `f.custom`                                                                                |
-| `authorize`   | ✓        | Whether a request may edit. It gates the endpoints and whether schemas are sent. Memoized per request                |
-| `user`        |          | Who to record on revisions (`{ id, name }`). The name is copied into the revision, so history survives deleted users |
-| `mediaExists` | ✓        | Validates `f.image` / `f.file` values                                                                                |
+| Option          | Required | Purpose                                                                                                              |
+| --------------- | -------- | -------------------------------------------------------------------------------------------------------------------- |
+| `pages`         |          | Editable pages and site-wide scopes                                                                                  |
+| `collections`   |          | Editable collections                                                                                                 |
+| `fieldTypes`    |          | Custom field types used by `f.custom`                                                                                |
+| `authorize`     | ✓        | Whether a request may edit. It gates the endpoints and whether schemas are sent. Memoized per request                |
+| `user`          |          | Who to record on revisions (`{ id, name }`). The name is copied into the revision, so history survives deleted users |
+| `media`         |          | The media library. Required as soon as a schema has `f.image` or `f.file` (checked at boot)                          |
+| `media.exists`  |          | `(key, folder) => Promise<boolean>`. Validates `f.image` / `f.file` values                                           |
+| `media.baseUrl` |          | Public base URL of media files, default `/media/`. Links and URLs under it count as uses of that file                |
+| `tablePrefix`   |          | Prefix of the CMS tables, default `cms_`. Must match the migration. `cmsTables(prefix)` gives the names              |
 
 All schemas are compiled when the service boots, so a typo in a schema or an unknown custom type fails at startup.
 

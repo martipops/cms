@@ -1,6 +1,5 @@
 import vine from '@vinejs/vine'
-import type { FieldContext } from '@vinejs/compiler/types'
-import type { SchemaTypes } from '@vinejs/vine/types'
+import type { FieldContext, SchemaTypes } from '@vinejs/vine/types'
 import type { Field } from '@sonata/cms-core'
 import type { CmsConfig } from './types.js'
 
@@ -9,7 +8,7 @@ import type { CmsConfig } from './types.js'
  * the definitions themselves, so there's nothing to keep in sync.
  */
 
-/** Internal links ("/about", "/media/pdfs/menu.pdf"), mailto/tel, or http(s) URLs */
+/** Internal links ("/about", "/media/files/menu.pdf"), mailto/tel, or http(s) URLs */
 const LINK_URL = /^(\/(?!\/)|https?:\/\/|mailto:|tel:)/
 
 const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -17,11 +16,11 @@ const escape = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 export class SchemaCompiler {
   #mediaRule: ReturnType<typeof vine.createRule<{ folder: string }>>
 
-  constructor(private config: Pick<CmsConfig, 'fieldTypes' | 'mediaExists'>) {
+  constructor(private config: Pick<CmsConfig, 'fieldTypes' | 'media'>) {
     this.#mediaRule = vine.createRule<{ folder: string }>(
       async (value: unknown, { folder }: { folder: string }, field: FieldContext) => {
         if (typeof value !== 'string' || !field.isValid) return
-        if (!value.startsWith(`${folder}/`) || !(await this.config.mediaExists(value, folder))) {
+        if (!value.startsWith(`${folder}/`) || !(await this.config.media!.exists(value, folder))) {
           field.report('Choose a file from the media library', 'media', field)
         }
       },
@@ -51,8 +50,10 @@ export class SchemaCompiler {
         return vine.enum(field.options.map((option) => option.value))
       case 'image':
       case 'file': {
-        const folder = field.type === 'image' ? 'images' : field.folder
-        const schema = vine.string().use(this.#mediaRule({ folder }))
+        if (!this.config.media) {
+          throw new Error(`${field.type} fields need the media option in config/cms.ts`)
+        }
+        const schema = vine.string().use(this.#mediaRule({ folder: field.folder }))
         return field.required ? schema : schema.nullable()
       }
       case 'link':

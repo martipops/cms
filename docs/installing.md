@@ -31,7 +31,10 @@ export default defineConfig({
   pages: [],
   authorize: (ctx) => ctx.bouncer?.allows('manageContent') ?? false,
   user: ({ auth }) => (auth?.user ? { id: auth.user.id, name: auth.user.email } : null),
-  mediaExists: async (key, folder) => Boolean(await Media.query().where({ key, folder }).first()),
+  // Only needed once a schema uses f.image or f.file
+  media: {
+    exists: async (key, folder) => Boolean(await Media.query().where({ key, folder }).first()),
+  },
 })
 ```
 

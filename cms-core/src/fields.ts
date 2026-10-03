@@ -51,28 +51,35 @@ export type SelectField = Base & {
   options: Option[]
 }
 
-/** Media library key (e.g. "images/marquee/1.webp") or null */
+/** Media library key (e.g. "images/hero.webp") or null */
 export type ImageField = Base & {
   type: 'image'
   default: string | null
+  /** Media folder to pick from; stored keys must start with it */
+  folder: string
   required: boolean
 }
 
-/** Media library key of a non-image file (e.g. "pdfs/menu.pdf") or null */
+/** Media library key of a non-image file (e.g. "files/menu.pdf") or null */
 export type FileField = Base & {
   type: 'file'
   default: string | null
-  /** Media folder to pick from */
+  /** Media folder to pick from; stored keys must start with it */
   folder: string
   required: boolean
 }
 
 export type LinkValue = { label: string; url: string }
 
-/** A label + URL pair. URLs may point at media files ("/media/pdfs/menu.pdf") */
+/** A label + URL pair. URLs may point at media files ("/media/files/menu.pdf") */
 export type LinkField = Base & {
   type: 'link'
   default: LinkValue
+  /**
+   * Media folder the editor offers files from for the URL. Defaults to the
+   * editor's `linkFolder` option
+   */
+  folder?: string
 }
 
 export type UrlField = Base & {
@@ -202,11 +209,11 @@ function select(
 }
 
 function image(options: Opts<ImageField> = {}): ImageField {
-  return { label: '', default: null, required: false, ...options, type: 'image' }
+  return { label: '', default: null, folder: 'images', required: false, ...options, type: 'image' }
 }
 
 function file(options: Opts<FileField> = {}): FileField {
-  return { label: '', default: null, folder: 'pdfs', required: false, ...options, type: 'file' }
+  return { label: '', default: null, folder: 'files', required: false, ...options, type: 'file' }
 }
 
 function link(options: Opts<LinkField> = {}): LinkField {

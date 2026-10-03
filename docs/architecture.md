@@ -179,15 +179,17 @@ editor
 
 ## Extension points (today)
 
-| Extension                  | How                                                                   |
-| -------------------------- | --------------------------------------------------------------------- |
-| New field type             | `defineFieldType` (server) + `fields: { name: Component }` (client)   |
-| Who may edit               | `authorize(ctx)` in `config/cms.ts`                                   |
-| Who gets credit in history | `user(ctx)` in `config/cms.ts`                                        |
-| Media existence check      | `mediaExists(key, folder)` in `config/cms.ts`                         |
-| Media picker UI            | `mediaPicker` plugin option                                           |
-| Media URLs                 | `mediaUrl` plugin option                                              |
-| Toolbar entries            | `<CmsToolbar :shortcuts>` for sections that aren't visible as a block |
+| Extension                  | How                                                                     |
+| -------------------------- | ----------------------------------------------------------------------- |
+| New field type             | `defineFieldType` (server) + `fields: { name: Component }` (client)     |
+| Who may edit               | `authorize(ctx)` in `config/cms.ts`                                     |
+| Who gets credit in history | `user(ctx)` in `config/cms.ts`                                          |
+| Media existence check      | `media.exists(key, folder)` in `config/cms.ts`                          |
+| Media picker UI            | `mediaPicker` plugin option                                             |
+| Media URLs                 | `media.baseUrl` (server) + `mediaUrl` plugin option (client)            |
+| Media folders              | `folder` on `f.image` / `f.file` / `f.link`, `linkFolder` plugin option |
+| Table names                | `tablePrefix` in `config/cms.ts`                                        |
+| Toolbar entries            | `<CmsToolbar :shortcuts>` for sections that aren't visible as a block   |
 
 ## Package boundaries
 

@@ -15,7 +15,7 @@ import {
   type CommitError,
   type CommitOp,
   type CommitResponse,
-  type CustomMediaKeys,
+  type MediaScan,
   type Document,
   type Field,
   type HistoryTarget,
@@ -28,11 +28,14 @@ import {
 import { SchemaCompiler } from './validation.js'
 import type { CmsConfig, CmsUser, StoredDocument } from './types.js'
 
-export const TABLES = {
-  sections: 'cms_sections',
-  documents: 'cms_documents',
-  revisions: 'cms_revisions',
-  seeds: 'cms_seeds',
+/** Names of the CMS tables for a prefix (config `tablePrefix`) */
+export function cmsTables(prefix = 'cms_') {
+  return {
+    sections: `${prefix}sections`,
+    documents: `${prefix}documents`,
+    revisions: `${prefix}revisions`,
+    seeds: `${prefix}seeds`,
+  }
 }
 
 /** Thrown by `commit()` when any op is invalid; nothing is saved */
@@ -61,12 +64,14 @@ const parse = (json: string | null) => (json === null ? null : JSON.parse(json))
  *
  * Sections store only edited fields (`cms_sections`); defaults come from the
  * schemas in code. Collection items are JSON documents (`cms_documents`).
- * Every change is appended to `cms_revisions`.
+ * Every change is appended to `cms_revisions`. (Table names follow the
+ * config's `tablePrefix`.)
  */
 export class Cms {
   readonly pages: Map<string, Page>
   readonly collections: Map<string, Collection>
   readonly compiler: SchemaCompiler
+  readonly tables: ReturnType<typeof cmsTables>
 
   #sections = new Map<string, SectionValues>()
   #documents = new Map<string, StoredDocument[]>()
@@ -77,6 +82,7 @@ export class Cms {
     this.pages = new Map(config.pages.map((page) => [page.name, page]))
     this.collections = new Map(config.collections.map((c) => [c.name, c]))
     this.compiler = new SchemaCompiler(config)
+    this.tables = cmsTables(config.tablePrefix)
 
     // Fail at boot rather than on first save
     for (const page of this.pages.values()) {
@@ -126,7 +132,7 @@ export class Cms {
     if (cached) return cached
 
     const page = this.page(name)
-    const rows = await db.from(TABLES.sections).where('page', name)
+    const rows = await db.from(this.tables.sections).where('page', name)
     const stored = new Map(rows.map((row) => [row.section, parse(row.data)]))
 
     const values = Object.fromEntries(
@@ -208,7 +214,7 @@ export class Cms {
     this.collection(name)
     await this.#ensureSeeded(name)
     const rows = await db
-      .from(TABLES.documents)
+      .from(this.tables.documents)
       .where('collection', name)
       .orderBy('sort_order')
       .orderBy('id')
@@ -234,13 +240,13 @@ export class Cms {
     const collection = this.collection(name)
 
     await db.transaction(async (trx) => {
-      const seeded = await trx.from(TABLES.seeds).where('collection', name).first()
+      const seeded = await trx.from(this.tables.seeds).where('collection', name).first()
       if (seeded) return
 
-      await trx.table(TABLES.seeds).insert({ collection: name, seeded_at: now() })
+      await trx.table(this.tables.seeds).insert({ collection: name, seeded_at: now() })
       for (const [index, { slug, ...item }] of collection.initial.entries()) {
         const data = normalizeFields(collection.fields, item)
-        await trx.table(TABLES.documents).insert({
+        await trx.table(this.tables.documents).insert({
           collection: name,
           slug: slug ?? (await this.#uniqueSlug(trx, collection, data)),
           data: JSON.stringify(data),
@@ -335,21 +341,21 @@ export class Cms {
 
     return async (trx) => {
       const where = { page: op.page, section: op.section }
-      const row = await trx.from(TABLES.sections).where(where).first()
+      const row = await trx.from(this.tables.sections).where(where).first()
       const data: Record<string, JsonValue> = { ...(parse(row?.data ?? null) ?? {}) }
       for (const key of reset) delete data[key]
       Object.assign(data, validated)
 
       const json = JSON.stringify(data)
       if (!Object.keys(data).length) {
-        await trx.from(TABLES.sections).where(where).delete()
+        await trx.from(this.tables.sections).where(where).delete()
       } else if (row) {
         await trx
-          .from(TABLES.sections)
+          .from(this.tables.sections)
           .where('id', row.id)
           .update({ data: json, updated_by: user?.id ?? null, updated_at: now() })
       } else {
-        await trx.table(TABLES.sections).insert({
+        await trx.table(this.tables.sections).insert({
           ...where,
           data: json,
           updated_by: user?.id ?? null,
@@ -386,7 +392,7 @@ export class Cms {
 
     return async (trx) => {
       const last = await trx
-        .from(TABLES.documents)
+        .from(this.tables.documents)
         .where('collection', collection.name)
         .max('sort_order as max')
         .first()
@@ -394,7 +400,7 @@ export class Cms {
       const json = JSON.stringify(data)
 
       const [inserted] = await trx
-        .table(TABLES.documents)
+        .table(this.tables.documents)
         .insert({
           collection: collection.name,
           slug,
@@ -427,7 +433,7 @@ export class Cms {
   ): Promise<Write | undefined> {
     const collection = this.collection(op.collection)
     const row = await db
-      .from(TABLES.documents)
+      .from(this.tables.documents)
       .where({ collection: collection.name, id: op.id })
       .first()
     if (!row) return void fail('', `This ${collection.label.toLowerCase()} no longer exists`)
@@ -455,7 +461,7 @@ export class Cms {
     return async (trx) => {
       const json = JSON.stringify(data)
       await trx
-        .from(TABLES.documents)
+        .from(this.tables.documents)
         .where('id', row.id)
         .update({ data: json, hidden, updated_by: user?.id ?? null, updated_at: now() })
 
@@ -481,7 +487,7 @@ export class Cms {
 
     return async (trx) => {
       const deleted = await trx
-        .from(TABLES.documents)
+        .from(this.tables.documents)
         .where({ collection: collection.name, id: op.id })
         .delete()
       if (!deleted) return
@@ -511,7 +517,7 @@ export class Cms {
       // New items only have ids once the creates earlier in this commit ran
       const ids = op.ids.map((id) => (typeof id === 'string' ? created[id]?.id : id))
       const rows = await trx
-        .from(TABLES.documents)
+        .from(this.tables.documents)
         .where('collection', collection.name)
         .select('id')
       const existing = new Set(rows.map((row: { id: number }) => Number(row.id)))
@@ -530,7 +536,7 @@ export class Cms {
       }
 
       for (const [order, id] of ids.entries()) {
-        await trx.from(TABLES.documents).where('id', id!).update({ sort_order: order })
+        await trx.from(this.tables.documents).where('id', id!).update({ sort_order: order })
       }
     }
   }
@@ -567,7 +573,7 @@ export class Cms {
     for (let n = 1; ; n++) {
       const slug = n === 1 ? base : `${base}-${n}`
       const taken = await trx
-        .from(TABLES.documents)
+        .from(this.tables.documents)
         .where({ collection: collection.name, slug })
         .first()
       if (!taken) return slug
@@ -585,7 +591,7 @@ export class Cms {
       hidden: boolean | null
     }
   ) {
-    await trx.table(TABLES.revisions).insert({
+    await trx.table(this.tables.revisions).insert({
       ...revision,
       user_id: user?.id ?? null,
       user_name: user?.name ?? null,
@@ -616,7 +622,7 @@ export class Cms {
     }
 
     const rows = await db
-      .from(TABLES.revisions)
+      .from(this.tables.revisions)
       .where({ kind, target: key })
       .orderBy('id', 'desc')
       .limit(25)
@@ -631,25 +637,30 @@ export class Cms {
     }))
   }
 
-  #customMediaKeys: CustomMediaKeys = (field, value) =>
-    this.config.fieldTypes.find((t) => t.name === field.component)?.mediaKeys?.(value, field) ?? []
+  #mediaScan(): MediaScan | null {
+    if (!this.config.media) return null
+    return {
+      baseUrl: this.config.media.baseUrl,
+      custom: (field, value) =>
+        this.config.fieldTypes.find((t) => t.name === field.component)?.mediaKeys?.(value, field) ??
+        [],
+    }
+  }
 
   /** Media keys referenced by schema defaults (static, from code) */
   defaultMediaKeys(): Set<string> {
     const keys = new Set<string>()
+    const scan = this.#mediaScan()
+    if (!scan) return keys
     for (const page of this.pages.values()) {
       for (const section of Object.values(page.sections)) {
         const defaults = resolveSection(section)
-        for (const key of mediaKeysInFields(section.fields, defaults, this.#customMediaKeys)) {
-          keys.add(key)
-        }
+        for (const key of mediaKeysInFields(section.fields, defaults, scan)) keys.add(key)
       }
     }
     for (const collection of this.collections.values()) {
       for (const item of collection.initial) {
-        for (const key of mediaKeysInFields(collection.fields, item, this.#customMediaKeys)) {
-          keys.add(key)
-        }
+        for (const key of mediaKeysInFields(collection.fields, item, scan)) keys.add(key)
       }
     }
     return keys
@@ -658,19 +669,17 @@ export class Cms {
   /** Media keys used anywhere in current content (defaults, edits, items) */
   async mediaKeysInUse(): Promise<Set<string>> {
     const keys = this.defaultMediaKeys()
+    const scan = this.#mediaScan()
+    if (!scan) return keys
     for (const page of this.pages.values()) {
       const values = await this.sections(page.name)
       for (const [name, section] of Object.entries(page.sections)) {
-        for (const key of mediaKeysInFields(section.fields, values[name], this.#customMediaKeys)) {
-          keys.add(key)
-        }
+        for (const key of mediaKeysInFields(section.fields, values[name], scan)) keys.add(key)
       }
     }
     for (const collection of this.collections.values()) {
       for (const doc of await this.#allDocuments(collection.name)) {
-        for (const key of mediaKeysInFields(collection.fields, doc.data, this.#customMediaKeys)) {
-          keys.add(key)
-        }
+        for (const key of mediaKeysInFields(collection.fields, doc.data, scan)) keys.add(key)
       }
     }
     return keys
