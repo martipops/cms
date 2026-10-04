@@ -5,7 +5,7 @@ import { registerRoutes, registerTailwind, registerVuePlugin } from './src/insta
 /**
  * `node ace configure @martipops/cms-adonis`: registers the provider and
  * commands, creates config/cms.ts and the migration, mounts the routes, and
- * installs the Vue plugin and Tailwind entry
+ * installs the Vite plugin, Vue plugin and Tailwind entry
  */
 export async function configure(command: Configure) {
   const codemods = await command.createCodemods()
@@ -18,6 +18,10 @@ export async function configure(command: Configure) {
   await codemods.makeUsingStub(stubsRoot, 'migration/create_cms_tables.stub', {
     fileName: `${Date.now()}_create_cms_tables.ts`,
   })
+
+  await codemods.registerVitePlugin('cms()', [
+    { isNamed: false, module: '@martipops/cms-vue/vite', identifier: 'cms' },
+  ])
 
   await registerRoutes(command)
   await registerVuePlugin(command)

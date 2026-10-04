@@ -19,6 +19,7 @@ First version prepared for use outside a client site.
 
 - `node ace configure @martipops/cms-adonis`: registers the provider and commands, creates `config/cms.ts` and the migration, mounts the routes, and installs the Vue plugin and Tailwind entry.
 - `cms:make:page`, `cms:make:collection` and `cms:make:field` generators, which also register what they create in `config/cms.ts`.
+- `@martipops/cms-vue` ships compiled (`dist/`, with type declarations) instead of `.vue` source, plus a Vite plugin, `@martipops/cms-vue/vite`, that sites add to `vite.config.ts` (the installer does).
 - `tablePrefix` config.
 - `cmsTablesV1` (`@martipops/cms-adonis/schema`): the tables as a versioned migration step.
 - `@martipops/cms-vue/tailwind.css`, replacing a hand-written `@source` path.

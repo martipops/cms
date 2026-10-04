@@ -18,6 +18,15 @@ createApp(…)
 
 It registers `CmsPage`, `CmsSection`, `CmsCollection` and `CmsToolbar` globally. With the Options API you can also import them by name for type checking.
 
+**Vite:** add the package's plugin. It keeps the package out of Vite's dependency pre-bundling and bundles it into SSR builds, because the components import Nuxt UI's `.vue` files, which only your app's Vite can compile:
+
+```ts
+// vite.config.ts
+import cms from '@martipops/cms-vue/vite'
+
+export default defineConfig({ plugins: [vue(), ui(), cms() /* … */] })
+```
+
 **Tailwind:** the components are styled with Tailwind classes, so Tailwind must scan them. Import the package's CSS entry after Nuxt UI; it points Tailwind at the components wherever the package is installed:
 
 ```css

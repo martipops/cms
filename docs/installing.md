@@ -30,6 +30,7 @@ It does the following, and skips any step that's already done:
 | Creates the config, with editing **off for everyone** until you set `authorize`    | `config/cms.ts`                              |
 | Creates the migration (calls [`cmsTablesV1`](server.md#tables))                    | `database/migrations/*_create_cms_tables.ts` |
 | Mounts the endpoints at `/admin/cms`, behind `middleware.auth()` if the app has it | `start/routes.ts`                            |
+| Adds the Vite plugin (`@martipops/cms-vue/vite`)                                   | `vite.config.ts`                             |
 | Installs the Vue plugin after Nuxt UI                                              | `inertia/app.ts`                             |
 | Lets Tailwind see the edit-mode components                                         | `inertia/css/app.css`                        |
 
@@ -92,8 +93,9 @@ What the installer does, for apps it can't edit:
 2. `config/cms.ts`: `export default defineConfig({ pages: [], authorize: () => false })` from `@martipops/cms-adonis`.
 3. A migration whose `up()` calls `cmsTablesV1.up(this.schema)` and `down()` calls `cmsTablesV1.down(this.schema)` (from `@martipops/cms-adonis/schema`).
 4. `start/routes.ts`: `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`
-5. `inertia/app.ts`: `import cms from '@martipops/cms-vue'`, then `.use(cms, { endpoint: '/admin/cms' })` after `.use(ui)`.
-6. `inertia/css/app.css`: `@import '@martipops/cms-vue/tailwind.css';` after `@import '@nuxt/ui';`.
+5. `vite.config.ts`: `import cms from '@martipops/cms-vue/vite'` and add `cms()` to `plugins`.
+6. `inertia/app.ts`: `import cms from '@martipops/cms-vue'`, then `.use(cms, { endpoint: '/admin/cms' })` after `.use(ui)`.
+7. `inertia/css/app.css`: `@import '@martipops/cms-vue/tailwind.css';` after `@import '@nuxt/ui';`.
 
 ## Checklist before launch
 

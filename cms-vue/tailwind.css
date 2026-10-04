@@ -6,4 +6,4 @@
  *   @import '@nuxt/ui';
  *   @import '@martipops/cms-vue/tailwind.css';
  */
-@source './src';
+@source './dist';

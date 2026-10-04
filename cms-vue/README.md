@@ -10,6 +10,6 @@ Edit mode for Inertia + Vue sites built with Nuxt UI. Sections and collections r
 <CmsToolbar v-if="user" />
 ```
 
-This package ships `.vue` source. Add `@source` for it in your Tailwind CSS.
+Sites add its Vite plugin (`import cms from '@martipops/cms-vue/vite'`, then `cms()` in `plugins`) and its Tailwind entry (`@import '@martipops/cms-vue/tailwind.css'`). `node ace configure @martipops/cms-adonis` does both.
 
 Docs: [client reference](../docs/client.md) · [architecture](../docs/architecture.md) · [library overview](../README.md)

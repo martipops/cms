@@ -90,13 +90,13 @@ Short records of choices that shape the library: what was decided, why, and what
 
 ---
 
-### D10. `cms-vue` ships source and injects app dependencies
+### D10. `cms-vue` ships compiled, with a Vite plugin, and injects app dependencies
 
-**Decision.** The Vue package is `.vue` + `.ts` source, compiled by the site's Vite. It takes the media picker and custom field editors as plugin options.
+**Decision.** The Vue package is built to `dist/` (Vite library mode, `vue-tsc` declarations), with Vue, Inertia, Nuxt UI and `cms-core` left as imports. Sites add `@martipops/cms-vue/vite` to their Vite plugins and import `@martipops/cms-vue/tailwind.css`. The media picker and custom field editors come in as plugin options.
 
-**Why.** No separate build pipeline for SFCs. The site's Tailwind and Nuxt UI theme apply directly, and the package never imports app code.
+**Why.** Shipping `.vue` + `.ts` source made sites type-check the package with their own `tsconfig`, and it only worked while the package was a workspace symlink. The components import Nuxt UI's `.vue` files directly (D11), which only the site's Vite can compile, so the plugin keeps the package out of dependency pre-bundling and bundles it into SSR builds. The package never imports app code, and the site's Tailwind and Nuxt UI theme still apply.
 
-**Trade-off.** Sites must add an `@source` line for Tailwind. A pre-built dist can come with publishing if needed.
+**Trade-off.** One more line in `vite.config.ts` (the installer adds it), and a build step when working on the package (`npm run dev` watches it).
 
 ---
 

@@ -75,17 +75,22 @@ test.group('Installer', () => {
       `      .use(ui)\n      .use(cms, { endpoint: '/admin/cms' })\n      .mount(el)`
     )
 
+    const viteConfig = await starter.read('vite.config.ts')
+    assert.include(viteConfig, `import cms from '@martipops/cms-vue/vite'`)
+    assert.match(viteConfig, /plugins: \[[^\]]*cms\(\)/s)
+
     const css = await starter.read('inertia/css/app.css')
     assert.include(css, `@import '@nuxt/ui';\n@import '@martipops/cms-vue/tailwind.css';`)
 
     // Running it again changes nothing
-    const before = [routes, vue, css]
+    const before = [routes, vue, css, viteConfig]
     await configure(await starter.ace.create(Configure, ['@martipops/cms-adonis']))
     assert.deepEqual(
       [
         await starter.read('start/routes.ts'),
         await starter.read('inertia/app.ts'),
         await starter.read('inertia/css/app.css'),
+        await starter.read('vite.config.ts'),
       ],
       before
     )

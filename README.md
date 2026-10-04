@@ -81,6 +81,6 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 
 ## Working on the library
 
-- `npm run dev` from the app root builds `cms-core` and `cms-adonis` in watch mode next to the dev server. `cms-vue` ships as `.vue` source, which the app's Vite compiles.
+- `npm run dev` from the app root builds all three packages in watch mode next to the dev server. `cms-vue` is built with Vite (library mode) and `vue-tsc`; the watcher rebuilds its JavaScript, and `npm run build -w @martipops/cms-vue` refreshes its type declarations.
 - Each package has its own suite: `npm test -w @martipops/cms-core` (pure functions) and `npm test -w @martipops/cms-adonis` (a minimal app on in-memory SQLite). Neither needs anything from the site. The root `npm test` runs both, then the site's own tests.
 - Any change to the commit protocol must update [protocol.md](docs/protocol.md) and both packages in the same commit.
