@@ -86,6 +86,14 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 - **Trying changes in a site before releasing:** run `npm run dev` here, and in the site run `npm link ../cms/packages/cms-core ../cms/packages/cms-adonis ../cms/packages/cms-vue` (adjust the path). `npm install` in the site undoes the link.
 - Any change to the commit protocol must update [protocol.md](docs/protocol.md) and both packages in the same commit.
 
+## Docs site
+
+`docs/` is also a [VitePress](https://vitepress.dev) site, with search, the diagrams rendered and the changelog as a page. Pages are the Markdown files themselves, so editing a guide updates the site.
+
+- `npm run docs:dev` previews it locally with hot reload; `npm run docs:build` builds it to `docs/.vitepress/dist`.
+- New pages go in the sidebar in `docs/.vitepress/config.ts`.
+- **Hosting:** `docs/Dockerfile` builds the site and serves it with nginx. To run it on the server behind Traefik, clone this repo next to the compose stack and add the service from [`deploy/docs-compose-service.yml`](deploy/docs-compose-service.yml), which also shows how to put a password on it. After a release: `cd <base>/cms && git pull`, then `docker compose up -d --build cms-docs` from the stack.
+
 ## Releasing
 
 All three packages share one version.

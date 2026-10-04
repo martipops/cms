@@ -20,7 +20,9 @@
     "format": "prettier --write .",
     "pretest": "npm run build",
     "pretypecheck": "npm run build",
-    "set-version": "node scripts/set_version.js"
+    "set-version": "node scripts/set_version.js",
+    "docs:dev": "npm run dev --prefix docs",
+    "docs:build": "npm run build --prefix docs"
   },
   "prettier": "@adonisjs/prettier-config",
   "devDependencies": {

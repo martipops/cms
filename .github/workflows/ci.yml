@@ -18,3 +18,6 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm test
+      # Fails on dead links and pages Vue can't compile
+      - run: npm ci --prefix docs
+      - run: npm run docs:build

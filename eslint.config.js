@@ -10,6 +10,8 @@ export default configApp(
       'packages/*/dist/**',
       'packages/*/tmp/**',
       'packages/*/tests/fixtures/**',
+      'docs/.vitepress/dist/**',
+      'docs/.vitepress/cache/**',
     ],
   },
   // The Vue preset targets inertia/; apply it to the Vue package instead

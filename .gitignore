@@ -6,3 +6,5 @@ packages/*/tmp
 .DS_Store
 .env
 .npmrc
+docs/.vitepress/dist
+docs/.vitepress/cache

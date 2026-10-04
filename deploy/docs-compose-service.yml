@@ -1,0 +1,26 @@
+# The docs site, for the same compose stack as the sites (Traefik in front).
+# Clone this repo next to the stack, then add under services: and run
+#   docker compose up -d --build cms-docs
+# Change the domain in the rule label.
+
+cms-docs:
+  build:
+    context: ../cms
+    dockerfile: docs/Dockerfile
+  container_name: cms-docs
+  restart: unless-stopped
+  expose:
+    - 80
+  networks:
+    - proxy
+  labels:
+    - traefik.enable=true
+    - traefik.http.routers.cms-docs.rule=Host(`cms.martipops.net`)
+    - traefik.http.routers.cms-docs.entrypoints=websecure
+    - traefik.http.routers.cms-docs.tls.certresolver=letsencrypt
+    - traefik.http.services.cms-docs.loadbalancer.server.port=80
+    # Optional password. Create the hash with
+    #   htpasswd -nbB <user> '<password>'
+    # and double every $ in it ($ → $$), then uncomment both lines:
+    # - traefik.http.middlewares.cms-docs-auth.basicauth.users=<user>:<hash>
+    # - traefik.http.routers.cms-docs.middlewares=cms-docs-auth
