@@ -14,7 +14,7 @@ import MakeField from '../commands/make_field.js'
  * Inertia + Nuxt UI app (tests/fixtures/starter)
  */
 async function starterApp() {
-  // Inside the package so the app resolves @adonisjs/* and @sonata/* like a real one
+  // Inside the package so the app resolves @adonisjs/* and @martipops/* like a real one
   await mkdir(join(import.meta.dirname, '../tmp'), { recursive: true })
   const root = await mkdtemp(join(import.meta.dirname, '../tmp/starter-'))
   await cp(join(import.meta.dirname, 'fixtures/starter'), root, { recursive: true })
@@ -46,12 +46,12 @@ test.group('Installer', () => {
     const starter = await starterApp()
     cleanup(starter.cleanup)
 
-    const command = await starter.ace.create(Configure, ['@sonata/cms-adonis'])
+    const command = await starter.ace.create(Configure, ['@martipops/cms-adonis'])
     await configure(command)
 
     const rc = await starter.read('adonisrc.ts')
-    assert.include(rc, `import('@sonata/cms-adonis/cms_provider')`)
-    assert.include(rc, `import('@sonata/cms-adonis/commands')`)
+    assert.include(rc, `import('@martipops/cms-adonis/cms_provider')`)
+    assert.include(rc, `import('@martipops/cms-adonis/commands')`)
 
     assert.include(await starter.read('config/cms.ts'), 'authorize: (_ctx: HttpContext) => false')
 
@@ -60,7 +60,7 @@ test.group('Installer', () => {
     assert.include(await starter.read(`database/migrations/${migration}`), 'cmsTablesV1.up')
 
     const routes = await starter.read('start/routes.ts')
-    assert.include(routes, `import { registerCmsRoutes } from '@sonata/cms-adonis'`)
+    assert.include(routes, `import { registerCmsRoutes } from '@martipops/cms-adonis'`)
     assert.include(routes, `import { middleware } from '#start/kernel'\n`)
     assert.notMatch(routes, /;$/m)
     assert.include(
@@ -69,18 +69,18 @@ test.group('Installer', () => {
     )
 
     const vue = await starter.read('inertia/app.ts')
-    assert.include(vue, `import cms from '@sonata/cms-vue'`)
+    assert.include(vue, `import cms from '@martipops/cms-vue'`)
     assert.include(
       vue,
       `      .use(ui)\n      .use(cms, { endpoint: '/admin/cms' })\n      .mount(el)`
     )
 
     const css = await starter.read('inertia/css/app.css')
-    assert.include(css, `@import '@nuxt/ui';\n@import '@sonata/cms-vue/tailwind.css';`)
+    assert.include(css, `@import '@nuxt/ui';\n@import '@martipops/cms-vue/tailwind.css';`)
 
     // Running it again changes nothing
     const before = [routes, vue, css]
-    await configure(await starter.ace.create(Configure, ['@sonata/cms-adonis']))
+    await configure(await starter.ace.create(Configure, ['@martipops/cms-adonis']))
     assert.deepEqual(
       [
         await starter.read('start/routes.ts'),
@@ -94,7 +94,7 @@ test.group('Installer', () => {
   test('make commands create schemas and register them', async ({ assert, cleanup }) => {
     const starter = await starterApp()
     cleanup(starter.cleanup)
-    await configure(await starter.ace.create(Configure, ['@sonata/cms-adonis']))
+    await configure(await starter.ace.create(Configure, ['@martipops/cms-adonis']))
 
     await starter.run(MakePage, ['about_us'])
     await starter.run(MakeCollection, ['team_member'])

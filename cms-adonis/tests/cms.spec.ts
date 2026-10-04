@@ -1,7 +1,7 @@
 import { test } from '@japa/runner'
 import vine from '@vinejs/vine'
 import db from '@adonisjs/lucid/services/db'
-import { defineCollection, definePage, f, section } from '@sonata/cms-core'
+import { defineCollection, definePage, f, section } from '@martipops/cms-core'
 import { Cms, CommitValidationError, cmsTablesV1, defineConfig, defineFieldType } from '../index.js'
 
 /** Files the fake media library has */

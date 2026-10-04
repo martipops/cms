@@ -1,9 +1,9 @@
-# @sonata/cms-adonis
+# @martipops/cms-adonis
 
 The AdonisJS side of the CMS: a provider, `config/cms.ts`, storage in `cms_*` tables, schema-to-VineJS validation, atomic commits, revision history and media-in-use tracking.
 
 ```ts
-import cms from '@sonata/cms-adonis/services/main'
+import cms from '@martipops/cms-adonis/services/main'
 
 await cms.pageProps('home', ctx) // values (+ schema for editors)
 await cms.collectionProps('locations', ctx)

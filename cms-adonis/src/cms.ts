@@ -24,7 +24,7 @@ import {
   type PageProps,
   type Revision,
   type Section,
-} from '@sonata/cms-core'
+} from '@martipops/cms-core'
 import { SchemaCompiler } from './validation.js'
 import { cmsTables } from './tables.js'
 import type { CmsConfig, CmsUser, StoredDocument } from './types.js'

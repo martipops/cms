@@ -1,9 +1,9 @@
-# Client reference (`@sonata/cms-vue`)
+# Client reference (`@martipops/cms-vue`)
 
 ## The plugin
 
 ```ts
-import cms from '@sonata/cms-vue'
+import cms from '@martipops/cms-vue'
 
 createApp(…)
   .use(ui)                          // Nuxt UI must be installed first
@@ -23,7 +23,7 @@ It registers `CmsPage`, `CmsSection`, `CmsCollection` and `CmsToolbar` globally.
 ```css
 @import 'tailwindcss';
 @import '@nuxt/ui';
-@import '@sonata/cms-vue/tailwind.css';
+@import '@martipops/cms-vue/tailwind.css';
 ```
 
 **Media picker contract.** Props: `open`, `folder` (a field's `folder`, or `linkFolder` for links), `title`. Emits: `update:open`, and `select` with `{ key, url }`.

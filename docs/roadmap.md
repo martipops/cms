@@ -46,12 +46,12 @@ media: {
 
 ### Installer
 
-✅ **Built:** `node ace configure @sonata/cms-adonis` plus `cms:make:page`, `cms:make:collection` and `cms:make:field` (see [installing](installing.md)). The rest of the original design is still open:
+✅ **Built:** `node ace configure @martipops/cms-adonis` plus `cms:make:page`, `cms:make:collection` and `cms:make:field` (see [installing](installing.md)). The rest of the original design is still open:
 
 | Command / step              | Does                                                                                                 | Size |
 | --------------------------- | ---------------------------------------------------------------------------------------------------- | ---- |
 | Toolbar scaffold            | Offer to add `<CmsToolbar>` to `inertia/layouts/default.vue` during `configure`                      | S    |
-| `--install` flag            | Install `@sonata/cms-core` and `@sonata/cms-vue` from `configure` (`codemods.installPackages`)       | S    |
+| `--install` flag            | Install `@martipops/cms-core` and `@martipops/cms-vue` from `configure` (`codemods.installPackages`) | S    |
 | `cms:doctor`                | Report orphaned stored fields, unknown sections, media referenced but missing, invalid stored values | M    |
 | `cms:export` / `cms:import` | See [content bundles](#content-bundles)                                                              | M    |
 
@@ -64,7 +64,7 @@ media: {
 ```ts
 // generated: .adonisjs/client/cms.d.ts (by an Adonis init hook, like indexPages)
 import type home from '#cms/pages/home'
-declare module '@sonata/cms-vue' {
+declare module '@martipops/cms-vue' {
   interface CmsPages {
     home: typeof home
   }
@@ -454,7 +454,7 @@ export default defineCmsPlugin({
   fieldTypes: [seoType],
   routes: (router) => router.get('sitemap.xml', …),
   hooks: { afterCommit: purgeSitemapCache },
-  client: () => import('@sonata/cms-seo/client'), // registers field editors, toolbar items, panels
+  client: () => import('@martipops/cms-seo/client'), // registers field editors, toolbar items, panels
 })
 ```
 
@@ -493,7 +493,7 @@ Client plugins can add toolbar buttons, panel tabs (like "SEO" next to "Content"
 
 ## Horizon 4 · Restaurant pack
 
-A vertical plugin (`@sonata/cms-restaurant`) that turns the generic CMS into a restaurant site kit. It's a separate package, so the core stays generic.
+A vertical plugin (`@martipops/cms-restaurant`) that turns the generic CMS into a restaurant site kit. It's a separate package, so the core stays generic.
 
 ### Structured menu
 

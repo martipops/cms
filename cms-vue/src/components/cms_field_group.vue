@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import type { GroupField, JsonValue } from '@sonata/cms-core'
+import type { GroupField, JsonValue } from '@martipops/cms-core'
 import { registry } from '../options.js'
 import { errorsUnder } from '../errors.js'
 

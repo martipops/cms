@@ -2,7 +2,7 @@
   exports({ to: app.makePath('app/cms/fields', entity.path, fileName) })
 }}}
 import vine from '@vinejs/vine'
-import { defineFieldType } from '@sonata/cms-adonis'
+import { defineFieldType } from '@martipops/cms-adonis'
 
 /**
  * A custom field type. Use it in schemas as

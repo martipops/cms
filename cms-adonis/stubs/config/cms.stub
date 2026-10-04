@@ -1,7 +1,7 @@
 {{{
   exports({ to: app.configPath('cms.ts') })
 }}}
-import { defineConfig } from '@sonata/cms-adonis'
+import { defineConfig } from '@martipops/cms-adonis'
 import type { HttpContext } from '@adonisjs/core/http'
 
 /**

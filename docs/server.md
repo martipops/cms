@@ -1,19 +1,19 @@
-# Server reference (`@sonata/cms-adonis`)
+# Server reference (`@martipops/cms-adonis`)
 
 ## Setup
 
 | Piece     | Where                                                                                                                                        |
 | --------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| Provider  | `adonisrc.ts` → `() => import('@sonata/cms-adonis/cms_provider')`                                                                            |
+| Provider  | `adonisrc.ts` → `() => import('@martipops/cms-adonis/cms_provider')`                                                                         |
 | Config    | `config/cms.ts` (below)                                                                                                                      |
 | Routes    | `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`                                                   |
 | Migration | Creates `cms_sections`, `cms_documents`, `cms_revisions`, `cms_seeds`, or the same with your `tablePrefix` (see [installing](installing.md)) |
-| Service   | `import cms from '@sonata/cms-adonis/services/main'`                                                                                         |
+| Service   | `import cms from '@martipops/cms-adonis/services/main'`                                                                                      |
 
 ## `config/cms.ts`
 
 ```ts
-import { defineConfig } from '@sonata/cms-adonis'
+import { defineConfig } from '@martipops/cms-adonis'
 
 export default defineConfig({
   pages: [site, home, about], // definePage results
@@ -107,7 +107,7 @@ Create them from a migration that calls the package's versioned schema step. A r
 
 ```ts
 import { BaseSchema } from '@adonisjs/lucid/schema'
-import { cmsTablesV1 } from '@sonata/cms-adonis/schema'
+import { cmsTablesV1 } from '@martipops/cms-adonis/schema'
 
 export default class extends BaseSchema {
   async up() {
@@ -131,8 +131,8 @@ User columns are plain strings with no foreign key, so the package makes no assu
 ## Testing
 
 ```ts
-import cms from '@sonata/cms-adonis/services/main'
-import { Cms, CommitValidationError, defineConfig } from '@sonata/cms-adonis'
+import cms from '@martipops/cms-adonis/services/main'
+import { Cms, CommitValidationError, defineConfig } from '@martipops/cms-adonis'
 
 test.group('…', (group) => {
   group.each.setup(() => {

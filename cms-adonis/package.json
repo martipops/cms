@@ -1,5 +1,5 @@
 {
-  "name": "@sonata/cms-adonis",
+  "name": "@martipops/cms-adonis",
   "version": "0.1.0",
   "private": true,
   "description": "AdonisJS side of the CMS: content storage, validation, commit and history endpoints",
@@ -42,7 +42,7 @@
     "typecheck": "tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "@sonata/cms-core": "^0.1.0"
+    "@martipops/cms-core": "^0.1.0"
   },
   "peerDependencies": {
     "@adonisjs/core": "^7.0.0",

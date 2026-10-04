@@ -1,5 +1,5 @@
 {
-  "name": "@sonata/cms-core",
+  "name": "@martipops/cms-core",
   "version": "0.1.0",
   "private": true,
   "description": "Isomorphic schema DSL for the CMS: field definitions, sections, collections and value helpers",

@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import type { PageProps } from '@sonata/cms-core'
+import type { PageProps } from '@martipops/cms-core'
 import { registerPage } from '../store.js'
 
 /**

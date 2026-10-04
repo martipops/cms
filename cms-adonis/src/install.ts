@@ -62,7 +62,7 @@ export async function registerRoutes(command: Command) {
     .getImportDeclarations()
     .some((d) => d.getNamedImports().some((n) => n.getName() === 'middleware'))
 
-  addImport(file, { moduleSpecifier: '@sonata/cms-adonis', namedImports: ['registerCmsRoutes'] })
+  addImport(file, { moduleSpecifier: '@martipops/cms-adonis', namedImports: ['registerCmsRoutes'] })
   if (auth && !importsMiddleware) {
     addImport(file, { moduleSpecifier: '#start/kernel', namedImports: ['middleware'] })
   }
@@ -78,10 +78,10 @@ export async function registerRoutes(command: Command) {
 /** Installs the Vue plugin after Nuxt UI in inertia/app.ts */
 export async function registerVuePlugin(command: Command) {
   const path = command.app.makePath('inertia/app.ts')
-  const instruction = `Import cms from '@sonata/cms-vue' and add .use(cms, { endpoint: '/admin/cms' }) after .use(ui)`
+  const instruction = `Import cms from '@martipops/cms-vue' and add .use(cms, { endpoint: '/admin/cms' }) after .use(ui)`
   const source = await readText(path)
   if (source === null) return manual(command, 'inertia/app.ts', instruction)
-  if (source.includes('@sonata/cms-vue')) return
+  if (source.includes('@martipops/cms-vue')) return
 
   const use = /^([ \t]*)(.*\.use\(ui\b[^)]*\))/m.exec(source)
   const imports = [...source.matchAll(/^import .*$/gm)].at(-1)
@@ -92,7 +92,7 @@ export async function registerVuePlugin(command: Command) {
   const afterImports = imports.index + imports[0].length
   const updated =
     source.slice(0, afterImports) +
-    `\nimport cms from '@sonata/cms-vue'` +
+    `\nimport cms from '@martipops/cms-vue'` +
     source.slice(afterImports, afterUse) +
     `\n${indent}.use(cms, { endpoint: '/admin/cms' })` +
     source.slice(afterUse)
@@ -103,10 +103,10 @@ export async function registerVuePlugin(command: Command) {
 /** Lets Tailwind see the edit-mode components (inertia/css/app.css) */
 export async function registerTailwind(command: Command) {
   const path = command.app.makePath('inertia/css/app.css')
-  const line = `@import '@sonata/cms-vue/tailwind.css';`
+  const line = `@import '@martipops/cms-vue/tailwind.css';`
   const source = await readText(path)
   if (source === null) return manual(command, 'inertia/css/app.css', `Add ${line} after Nuxt UI`)
-  if (source.includes('@sonata/cms-vue/tailwind.css')) return
+  if (source.includes('@martipops/cms-vue/tailwind.css')) return
 
   const nuxtUi = /^@import ['"]@nuxt\/ui['"];?[ \t]*$/m.exec(source)
   if (!nuxtUi) return manual(command, 'inertia/css/app.css', `Add ${line} after Nuxt UI`)

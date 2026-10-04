@@ -1,7 +1,7 @@
 {{{
   exports({ to: app.makePath('app/cms/pages', entity.path, fileName) })
 }}}
-import { definePage, f, section } from '@sonata/cms-core'
+import { definePage, f, section } from '@martipops/cms-core'
 
 /**
  * Render it with:

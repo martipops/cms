@@ -3,7 +3,7 @@
 }}}
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import type { CustomField, JsonValue } from '@sonata/cms-core'
+import type { CustomField, JsonValue } from '@martipops/cms-core'
 
 /**
  * Editor for the "{{ typeName }}" field type. errors holds server errors by

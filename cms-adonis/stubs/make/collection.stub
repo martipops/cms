@@ -1,7 +1,7 @@
 {{{
   exports({ to: app.makePath('app/cms/collections', entity.path, fileName) })
 }}}
-import { defineCollection, f } from '@sonata/cms-core'
+import { defineCollection, f } from '@martipops/cms-core'
 
 /**
  * Send it with cms.collectionProps('{{ collectionName }}', ctx) and render it with:

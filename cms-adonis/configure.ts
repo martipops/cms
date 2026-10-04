@@ -3,7 +3,7 @@ import { stubsRoot } from './stubs/main.js'
 import { registerRoutes, registerTailwind, registerVuePlugin } from './src/install.js'
 
 /**
- * `node ace configure @sonata/cms-adonis`: registers the provider and
+ * `node ace configure @martipops/cms-adonis`: registers the provider and
  * commands, creates config/cms.ts and the migration, mounts the routes, and
  * installs the Vue plugin and Tailwind entry
  */
@@ -11,8 +11,8 @@ export async function configure(command: Configure) {
   const codemods = await command.createCodemods()
 
   await codemods.updateRcFile((rcFile) => {
-    rcFile.addProvider('@sonata/cms-adonis/cms_provider')
-    rcFile.addCommand('@sonata/cms-adonis/commands')
+    rcFile.addProvider('@martipops/cms-adonis/cms_provider')
+    rcFile.addCommand('@martipops/cms-adonis/commands')
   })
   await codemods.makeUsingStub(stubsRoot, 'config/cms.stub', {})
   await codemods.makeUsingStub(stubsRoot, 'migration/create_cms_tables.stub', {

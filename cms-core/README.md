@@ -1,4 +1,4 @@
-# @sonata/cms-core
+# @martipops/cms-core
 
 The schema DSL shared by the server and the browser. It has no dependencies.
 

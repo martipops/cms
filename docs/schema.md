@@ -1,9 +1,9 @@
 # Schema reference
 
-Schemas come from `@sonata/cms-core`. They're plain, JSON-serializable objects, so the same definition drives the editor in the browser and validation on the server.
+Schemas come from `@martipops/cms-core`. They're plain, JSON-serializable objects, so the same definition drives the editor in the browser and validation on the server.
 
 ```ts
-import { f, definePage, section, defineCollection } from '@sonata/cms-core'
+import { f, definePage, section, defineCollection } from '@martipops/cms-core'
 ```
 
 ## Pages and sections

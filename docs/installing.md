@@ -13,13 +13,13 @@ About five minutes on a fresh Adonis + Inertia + Vue + Nuxt UI app: install the 
 While they live in the client site's repo, copy `packages/` and add `"workspaces": ["packages/*"]` to the app's `package.json`. Once published:
 
 ```sh
-npm i @sonata/cms-core @sonata/cms-adonis @sonata/cms-vue
+npm i @martipops/cms-core @martipops/cms-adonis @martipops/cms-vue
 ```
 
 ## 2. Run the installer
 
 ```sh
-node ace configure @sonata/cms-adonis
+node ace configure @martipops/cms-adonis
 ```
 
 It does the following, and skips any step that's already done:
@@ -88,12 +88,12 @@ While the packages are workspaces, `npm ci` must see each package's `package.jso
 
 What the installer does, for apps it can't edit:
 
-1. `adonisrc.ts`: add `() => import('@sonata/cms-adonis/cms_provider')` to `providers` and `() => import('@sonata/cms-adonis/commands')` to `commands`.
-2. `config/cms.ts`: `export default defineConfig({ pages: [], authorize: () => false })` from `@sonata/cms-adonis`.
-3. A migration whose `up()` calls `cmsTablesV1.up(this.schema)` and `down()` calls `cmsTablesV1.down(this.schema)` (from `@sonata/cms-adonis/schema`).
+1. `adonisrc.ts`: add `() => import('@martipops/cms-adonis/cms_provider')` to `providers` and `() => import('@martipops/cms-adonis/commands')` to `commands`.
+2. `config/cms.ts`: `export default defineConfig({ pages: [], authorize: () => false })` from `@martipops/cms-adonis`.
+3. A migration whose `up()` calls `cmsTablesV1.up(this.schema)` and `down()` calls `cmsTablesV1.down(this.schema)` (from `@martipops/cms-adonis/schema`).
 4. `start/routes.ts`: `router.group(() => registerCmsRoutes(router)).prefix('admin/cms').use(middleware.auth())`
-5. `inertia/app.ts`: `import cms from '@sonata/cms-vue'`, then `.use(cms, { endpoint: '/admin/cms' })` after `.use(ui)`.
-6. `inertia/css/app.css`: `@import '@sonata/cms-vue/tailwind.css';` after `@import '@nuxt/ui';`.
+5. `inertia/app.ts`: `import cms from '@martipops/cms-vue'`, then `.use(cms, { endpoint: '/admin/cms' })` after `.use(ui)`.
+6. `inertia/css/app.css`: `@import '@martipops/cms-vue/tailwind.css';` after `@import '@nuxt/ui';`.
 
 ## Checklist before launch
 

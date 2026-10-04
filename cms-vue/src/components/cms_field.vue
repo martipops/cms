@@ -1,6 +1,6 @@
 <script lang="ts">
 import { defineComponent, type PropType } from 'vue'
-import type { CustomField, Field, JsonValue, LinkValue } from '@sonata/cms-core'
+import type { CustomField, Field, JsonValue, LinkValue } from '@martipops/cms-core'
 import UButton from '@nuxt/ui/components/Button.vue'
 import UFieldGroup from '@nuxt/ui/components/FieldGroup.vue'
 import UFormField from '@nuxt/ui/components/FormField.vue'

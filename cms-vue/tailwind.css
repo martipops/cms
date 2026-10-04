@@ -4,6 +4,6 @@
  *
  *   @import 'tailwindcss';
  *   @import '@nuxt/ui';
- *   @import '@sonata/cms-vue/tailwind.css';
+ *   @import '@martipops/cms-vue/tailwind.css';
  */
 @source './src';
