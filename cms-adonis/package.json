@@ -35,7 +35,8 @@
     "build"
   ],
   "scripts": {
-    "build": "tsc -p tsconfig.json && node scripts/copy_stubs.js && adonis-kit index build/commands",
+    "clean": "node -e \"require('node:fs').rmSync('build', { recursive: true, force: true })\"",
+    "build": "npm run clean && tsc -p tsconfig.json && node scripts/copy_stubs.js && adonis-kit index build/commands",
     "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
     "test": "node --import=@poppinss/ts-exec bin/test.ts",
     "typecheck": "tsc -p tsconfig.test.json"
