@@ -4,7 +4,7 @@ All three packages (`@martipops/cms-core`, `@martipops/cms-adonis`, `@martipops/
 
 ## 0.1.0
 
-First version prepared for use outside a client site.
+First version prepared for use outside a client site, in its own repo and published privately to GitHub Packages.
 
 **Breaking**
 
@@ -29,3 +29,4 @@ First version prepared for use outside a client site.
 
 - `cms-adonis` imported types from `@vinejs/compiler`, which it didn't depend on.
 - `slugify` strips accents with an explicit Unicode range.
+- Builds from a fresh install outside the site: `cms-adonis` declares `luxon` and `@adonisjs/assembler` for its tests, and its `ts-morph` types follow the assembler's major version (28). `cms-vue` type-checks under newer `vue-tsc`.

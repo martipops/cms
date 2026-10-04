@@ -1,10 +1,20 @@
 {
   "name": "@martipops/cms-core",
   "version": "0.1.0",
-  "private": true,
   "description": "Isomorphic schema DSL for the CMS: field definitions, sections, collections and value helpers",
   "type": "module",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martipops/cms.git",
+    "directory": "packages/cms-core"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "exports": {
     ".": {
       "types": "./build/index.d.ts",

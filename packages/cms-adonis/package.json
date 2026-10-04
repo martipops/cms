@@ -1,10 +1,20 @@
 {
   "name": "@martipops/cms-adonis",
   "version": "0.1.0",
-  "private": true,
   "description": "AdonisJS side of the CMS: content storage, validation, commit and history endpoints",
   "type": "module",
   "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/martipops/cms.git",
+    "directory": "packages/cms-adonis"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
+  },
+  "engines": {
+    "node": ">=24.0.0"
+  },
   "exports": {
     ".": {
       "types": "./build/index.d.ts",
@@ -51,6 +61,7 @@
     "@adonisjs/assembler": "^8.0.0"
   },
   "devDependencies": {
+    "@adonisjs/assembler": "^8.4.0",
     "@adonisjs/core": "^7.3.3",
     "@adonisjs/lucid": "^22.4.2",
     "@japa/assert": "^4.2.0",
@@ -59,9 +70,10 @@
     "@types/node": "~25.9.1",
     "@vinejs/vine": "^4.4.0",
     "better-sqlite3": "^12.10.0",
+    "luxon": "^3.7.2",
     "reflect-metadata": "^0.2.2",
-    "typescript": "~6.0.3",
-    "ts-morph": "^27.0.2"
+    "ts-morph": "^28.0.0",
+    "typescript": "~6.0.3"
   },
   "keywords": [
     "cms",

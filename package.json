@@ -1,0 +1,35 @@
+{
+  "name": "@martipops/cms-workspace",
+  "private": true,
+  "type": "module",
+  "license": "UNLICENSED",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "workspaces": [
+    "packages/cms-core",
+    "packages/cms-adonis",
+    "packages/cms-vue"
+  ],
+  "scripts": {
+    "build": "npm run build -w @martipops/cms-core && npm run build -w @martipops/cms-adonis && npm run build -w @martipops/cms-vue",
+    "dev": "npm run build && concurrently -k -n core,adonis,vue \"npm run dev -w @martipops/cms-core\" \"npm run dev -w @martipops/cms-adonis\" \"npm run dev -w @martipops/cms-vue\"",
+    "test": "npm test -w @martipops/cms-core -w @martipops/cms-adonis",
+    "typecheck": "npm run typecheck -w @martipops/cms-core -w @martipops/cms-adonis",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "pretest": "npm run build",
+    "pretypecheck": "npm run build",
+    "set-version": "node scripts/set_version.js"
+  },
+  "prettier": "@adonisjs/prettier-config",
+  "devDependencies": {
+    "@adonisjs/eslint-config": "^3.1.0",
+    "@adonisjs/prettier-config": "^1.5.0",
+    "concurrently": "^10.0.5",
+    "eslint": "^10.4.0",
+    "eslint-plugin-vue": "^10.9.1",
+    "prettier": "^3.8.3",
+    "typescript": "~6.0.3"
+  }
+}

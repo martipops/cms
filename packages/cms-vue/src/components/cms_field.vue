@@ -77,6 +77,11 @@ export default defineComponent({
       const value = this.modelValue
       return value && typeof value === 'object' && !Array.isArray(value) ? value : {}
     },
+    placeholder(): string | undefined {
+      return this.field.type === 'text' || this.field.type === 'url'
+        ? this.field.placeholder
+        : undefined
+    },
     mediaSrc(): string | null {
       return typeof this.modelValue === 'string' ? mediaUrl(this.modelValue) : null
     },
@@ -137,7 +142,7 @@ export default defineComponent({
         v-if="field.multiline"
         :model-value="text"
         :maxlength="field.max"
-        :placeholder="field.placeholder"
+        :placeholder="placeholder"
         :rows="3"
         autoresize
         class="w-full"
@@ -147,7 +152,7 @@ export default defineComponent({
         v-else
         :model-value="text"
         :maxlength="field.max"
-        :placeholder="field.placeholder"
+        :placeholder="placeholder"
         class="w-full"
         @update:model-value="emit"
       />
@@ -157,7 +162,7 @@ export default defineComponent({
       v-else-if="field.type === 'url'"
       :model-value="text"
       type="url"
-      :placeholder="field.placeholder ?? 'https://…'"
+      :placeholder="placeholder ?? 'https://…'"
       class="w-full"
       @update:model-value="emit"
     />
@@ -235,14 +240,14 @@ export default defineComponent({
         :model-value="link.label"
         placeholder="Label"
         class="w-full"
-        @update:model-value="(value) => updateLink('label', value)"
+        @update:model-value="(value: unknown) => updateLink('label', value)"
       />
       <UFieldGroup class="w-full">
         <UInput
           :model-value="link.url"
           placeholder="/page or https://…"
           class="w-full"
-          @update:model-value="(value) => updateLink('url', value)"
+          @update:model-value="(value: unknown) => updateLink('url', value)"
         />
         <UButton
           v-if="linkFolder"

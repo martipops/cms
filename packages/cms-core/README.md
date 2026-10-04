@@ -8,4 +8,4 @@ The schema DSL shared by the server and the browser. It has no dependencies.
 - **Values:** `normalize`, `resolveSection`, `defaultsOf`, `mediaKeysIn`, `slugify`
 - **Wire protocol:** `CommitOp`, `CommitError`, `CommitResponse`, `Revision`
 
-Docs: [schema reference](../docs/schema.md) · [protocol](../docs/protocol.md) · [library overview](../README.md)
+Docs: [schema reference](https://github.com/martipops/cms/blob/main/docs/schema.md) · [protocol](https://github.com/martipops/cms/blob/main/docs/protocol.md) · [library overview](https://github.com/martipops/cms#readme)

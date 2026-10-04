@@ -10,7 +10,14 @@ About five minutes on a fresh Adonis + Inertia + Vue + Nuxt UI app: install the 
 
 ## 1. Install the packages
 
-While they live in the client site's repo, copy `packages/` and add `"workspaces": ["packages/*"]` to the app's `package.json`. Once published:
+They're private packages on GitHub Packages. Tell npm where `@martipops/*` lives with an `.npmrc` in the app (commit it; it holds no secret):
+
+```ini
+@martipops:registry=https://npm.pkg.github.com
+//npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+```
+
+`NPM_TOKEN` is a GitHub personal access token (classic) with the `read:packages` scope, set in your shell (and as a secret wherever the app builds). Then:
 
 ```sh
 npm i @martipops/cms-core @martipops/cms-adonis @martipops/cms-vue
@@ -83,7 +90,16 @@ A custom field's editor still needs registering with the Vue plugin (`fields: { 
 
 ## Docker
 
-While the packages are workspaces, `npm ci` must see each package's `package.json`, and the production stage needs the built packages. See this repo's `Dockerfile`. This isn't needed once they're installed from a registry.
+`npm ci` needs the token to download the packages. Pass it as a build secret so it never ends up in an image layer:
+
+```dockerfile
+COPY package*.json .npmrc ./
+RUN --mount=type=secret,id=npm_token NPM_TOKEN=$(cat /run/secrets/npm_token) npm ci
+```
+
+```sh
+docker build --secret id=npm_token,env=NPM_TOKEN .
+```
 
 ## Manual install
 

@@ -1,0 +1,38 @@
+name: Release
+
+# Publishes all three packages to GitHub Packages when a version tag
+# (v0.2.0) is pushed. See "Releasing" in the README.
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: https://npm.pkg.github.com
+          scope: '@martipops'
+      - run: npm ci
+      - name: Tag matches the package versions
+        run: |
+          for pkg in packages/cms-*; do
+            version=$(node -p "require('./$pkg/package.json').version")
+            if [ "v$version" != "$GITHUB_REF_NAME" ]; then
+              echo "$pkg is $version but the tag is $GITHUB_REF_NAME"
+              exit 1
+            fi
+          done
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm publish -w @martipops/cms-core -w @martipops/cms-adonis -w @martipops/cms-vue
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

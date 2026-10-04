@@ -1,0 +1,8 @@
+node_modules
+packages/*/build
+packages/*/dist
+packages/*/tmp
+*.log
+.DS_Store
+.env
+.npmrc

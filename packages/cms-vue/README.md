@@ -12,4 +12,4 @@ Edit mode for Inertia + Vue sites built with Nuxt UI. Sections and collections r
 
 Sites add its Vite plugin (`import cms from '@martipops/cms-vue/vite'`, then `cms()` in `plugins`) and its Tailwind entry (`@import '@martipops/cms-vue/tailwind.css'`). `node ace configure @martipops/cms-adonis` does both.
 
-Docs: [client reference](../docs/client.md) · [architecture](../docs/architecture.md) · [library overview](../README.md)
+Docs: [client reference](https://github.com/martipops/cms/blob/main/docs/client.md) · [architecture](https://github.com/martipops/cms/blob/main/docs/architecture.md) · [library overview](https://github.com/martipops/cms#readme)

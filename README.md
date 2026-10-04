@@ -5,12 +5,12 @@ A drop-in content editing system for **AdonisJS + Inertia + Vue + Nuxt UI** site
 ```
 packages/
 ├── cms-core/     schema DSL, shared by server and browser (no dependencies)
-├── cms-adonis/   storage, validation, commit + history endpoints
-├── cms-vue/      CmsPage · CmsSection · CmsCollection · CmsToolbar · generated forms
-└── docs/         everything below
+├── cms-adonis/   storage, validation, commit + history endpoints, installer
+└── cms-vue/      CmsPage · CmsSection · CmsCollection · CmsToolbar · generated forms
+docs/             everything below
 ```
 
-It was built for a client site and is developed inside that repo as npm workspaces. It moves to its own repo once the API settles.
+It was built for a client site. The packages are private and published to GitHub Packages; see [installing](docs/installing.md).
 
 ## Two-minute tour
 
@@ -81,6 +81,17 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 
 ## Working on the library
 
-- `npm run dev` from the app root builds all three packages in watch mode next to the dev server. `cms-vue` is built with Vite (library mode) and `vue-tsc`; the watcher rebuilds its JavaScript, and `npm run build -w @martipops/cms-vue` refreshes its type declarations.
-- Each package has its own suite: `npm test -w @martipops/cms-core` (pure functions) and `npm test -w @martipops/cms-adonis` (a minimal app on in-memory SQLite). Neither needs anything from the site. The root `npm test` runs both, then the site's own tests.
+- `npm install`, then `npm run dev` builds all three packages in watch mode. `cms-vue` is built with Vite (library mode) and `vue-tsc`; the watcher rebuilds its JavaScript, and `npm run build -w @martipops/cms-vue` refreshes its type declarations.
+- `npm test` runs each package's suite: `cms-core` (pure functions) and `cms-adonis` (a minimal app on in-memory SQLite, plus the installer against a starter-app fixture). `npm run typecheck` and `npm run lint` cover the rest. CI runs all three on every push.
+- **Trying changes in a site before releasing:** run `npm run dev` here, and in the site run `npm link ../cms/packages/cms-core ../cms/packages/cms-adonis ../cms/packages/cms-vue` (adjust the path). `npm install` in the site undoes the link.
 - Any change to the commit protocol must update [protocol.md](docs/protocol.md) and both packages in the same commit.
+
+## Releasing
+
+All three packages share one version.
+
+1. `npm run set-version -- 0.2.0` sets it on every package and the range they use for each other.
+2. Add the release to [CHANGELOG.md](CHANGELOG.md) (breaking changes under **Breaking**).
+3. Commit, then `git tag v0.2.0 && git push && git push --tags`.
+
+The [release workflow](.github/workflows/release.yml) checks the tag matches the versions, runs the type check and tests, and publishes the packages to GitHub Packages.

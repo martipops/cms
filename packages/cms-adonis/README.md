@@ -11,4 +11,4 @@ await cms.findOrFail('locations', 'downtown')
 await cms.commit(ops, user) // what the editor's Save calls
 ```
 
-Docs: [server reference](../docs/server.md) · [installing](../docs/installing.md) · [architecture](../docs/architecture.md) · [library overview](../README.md)
+Docs: [server reference](https://github.com/martipops/cms/blob/main/docs/server.md) · [installing](https://github.com/martipops/cms/blob/main/docs/installing.md) · [architecture](https://github.com/martipops/cms/blob/main/docs/architecture.md) · [library overview](https://github.com/martipops/cms#readme)
