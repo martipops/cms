@@ -83,7 +83,7 @@ For lists of records (locations, menu items, events), `defineCollection` plus `<
 
 - `npm install`, then `npm run dev` builds all three packages in watch mode. `cms-vue` is built with Vite (library mode) and `vue-tsc`; the watcher rebuilds its JavaScript, and `npm run build -w @martipops/cms-vue` refreshes its type declarations.
 - `npm test` runs each package's suite: `cms-core` (pure functions) and `cms-adonis` (a minimal app on in-memory SQLite, plus the installer against a starter-app fixture). `npm run typecheck` and `npm run lint` cover the rest. CI runs all three on every push.
-- **Trying changes in a site before releasing:** run `npm run dev` here, and in the site run `npm link ../cms/packages/cms-core ../cms/packages/cms-adonis ../cms/packages/cms-vue` (adjust the path). `npm install` in the site undoes the link.
+- **Trying changes in a site before releasing:** run `npm run dev` here. A plain `npm link` makes the site load this repo's copies of Vue and AdonisJS alongside its own, so link with `--preserve-symlinks` for Node and Vite's `resolve.dedupe: ['vue', '@inertiajs/vue3', '@nuxt/ui']`. The the client site's site has this set up as `npm run cms:link` and `npm run dev:cms`.
 - Any change to the commit protocol must update [protocol.md](docs/protocol.md) and both packages in the same commit.
 
 ## Docs site
