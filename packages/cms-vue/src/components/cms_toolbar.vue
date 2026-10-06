@@ -96,9 +96,7 @@ export default defineComponent({
         })
       }
     },
-    discard() {
-      discard()
-    },
+    discard,
     discardAndExit() {
       discard()
       this.confirmExitOpen = false
