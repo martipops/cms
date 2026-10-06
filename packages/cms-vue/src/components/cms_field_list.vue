@@ -83,6 +83,32 @@ export default defineComponent({
       ]
       this.$emit('update:modelValue', items)
     },
+    actions(index: number) {
+      const last = this.modelValue.length - 1
+      return [
+        {
+          label: 'Move up',
+          icon: 'i-lucide-arrow-up',
+          color: 'neutral' as const,
+          disabled: index === 0,
+          run: () => this.move(index, -1),
+        },
+        {
+          label: 'Move down',
+          icon: 'i-lucide-arrow-down',
+          color: 'neutral' as const,
+          disabled: index === last,
+          run: () => this.move(index, 1),
+        },
+        {
+          label: 'Remove',
+          icon: 'i-lucide-trash-2',
+          color: 'error' as const,
+          disabled: last < this.field.min,
+          run: () => this.remove(index),
+        },
+      ]
+    },
     remove(index: number) {
       this.expanded.splice(index, 1)
       this.$emit(
@@ -118,31 +144,15 @@ export default defineComponent({
         />
         <div class="flex shrink-0">
           <UButton
-            icon="i-lucide-arrow-up"
-            aria-label="Move up"
-            color="neutral"
+            v-for="action in actions(index)"
+            :key="action.label"
+            :icon="action.icon"
+            :aria-label="action.label"
+            :color="action.color"
             variant="ghost"
             size="xs"
-            :disabled="index === 0"
-            @click="move(index, -1)"
-          />
-          <UButton
-            icon="i-lucide-arrow-down"
-            aria-label="Move down"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            :disabled="index === modelValue.length - 1"
-            @click="move(index, 1)"
-          />
-          <UButton
-            icon="i-lucide-trash-2"
-            aria-label="Remove"
-            color="error"
-            variant="ghost"
-            size="xs"
-            :disabled="modelValue.length <= field.min"
-            @click="remove(index)"
+            :disabled="action.disabled"
+            @click.stop="action.run"
           />
         </div>
       </div>
@@ -158,31 +168,15 @@ export default defineComponent({
             <span class="truncate text-sm font-medium">{{ title(item, index) }}</span>
           </button>
           <UButton
-            icon="i-lucide-arrow-up"
-            aria-label="Move up"
-            color="neutral"
+            v-for="action in actions(index)"
+            :key="action.label"
+            :icon="action.icon"
+            :aria-label="action.label"
+            :color="action.color"
             variant="ghost"
             size="xs"
-            :disabled="index === 0"
-            @click.stop="move(index, -1)"
-          />
-          <UButton
-            icon="i-lucide-arrow-down"
-            aria-label="Move down"
-            color="neutral"
-            variant="ghost"
-            size="xs"
-            :disabled="index === modelValue.length - 1"
-            @click.stop="move(index, 1)"
-          />
-          <UButton
-            icon="i-lucide-trash-2"
-            aria-label="Remove"
-            color="error"
-            variant="ghost"
-            size="xs"
-            :disabled="modelValue.length <= field.min"
-            @click.stop="remove(index)"
+            :disabled="action.disabled"
+            @click.stop="action.run"
           />
         </div>
         <template #content>
