@@ -8,6 +8,7 @@ import {
   collectionItems,
   openPanel,
   registerCollection,
+  toItem,
   type Item,
 } from '../store.js'
 
@@ -43,7 +44,7 @@ export default defineComponent({
     },
   },
   slots: Object as SlotsType<{
-    default: { items: Item[]; all: Item[]; edit: (item?: Item) => void; editable: boolean }
+    default: { items: Item[]; edit: (item?: Item) => void; editable: boolean }
   }>,
   computed: {
     name(): string {
@@ -55,15 +56,7 @@ export default defineComponent({
     all(): Item[] {
       return this.editable
         ? collectionItems(this.name)
-        : this.collection.items.map((doc) => ({
-            key: doc.id,
-            id: doc.id,
-            slug: doc.slug,
-            hidden: doc.hidden,
-            data: doc.data,
-            isNew: false,
-            dirty: false,
-          }))
+        : this.collection.items.map((doc) => toItem(doc))
     },
     items(): Item[] {
       return this.all.filter((item) => !item.hidden)
@@ -102,7 +95,7 @@ export default defineComponent({
         : undefined
     "
   >
-    <slot :items="items" :all="all" :edit="edit" :editable="editable" />
+    <slot :items="items" :edit="edit" :editable="editable" />
 
     <UButton
       v-if="editable && !noButton"

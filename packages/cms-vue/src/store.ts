@@ -7,6 +7,7 @@ import {
   type CommitError,
   type CommitOp,
   type CommitResponse,
+  type Document,
   type JsonValue,
   type PageProps,
   type Revision,
@@ -189,6 +190,19 @@ function pruneCollection(collection: string) {
   }
 }
 
+/** A saved item, with its staged update applied if there is one */
+export function toItem(doc: Document, update?: CollectionDraft['updates'][number]): Item {
+  return {
+    key: doc.id,
+    id: doc.id,
+    slug: doc.slug,
+    hidden: update?.hidden ?? doc.hidden,
+    data: update ? { ...doc.data, ...update.data } : doc.data,
+    isNew: false,
+    dirty: Boolean(update),
+  }
+}
+
 /** Every item of a collection (hidden ones included) with drafts applied */
 export function collectionItems(collection: string): Item[] {
   const props = editor.collections[collection]
@@ -197,18 +211,7 @@ export function collectionItems(collection: string): Item[] {
 
   const items: Item[] = props.items
     .filter((doc) => !draft?.deletes.includes(doc.id))
-    .map((doc) => {
-      const update = draft?.updates[doc.id]
-      return {
-        key: doc.id,
-        id: doc.id,
-        slug: doc.slug,
-        hidden: update?.hidden ?? doc.hidden,
-        data: update ? { ...doc.data, ...update.data } : doc.data,
-        isNew: false,
-        dirty: Boolean(update),
-      }
-    })
+    .map((doc) => toItem(doc, draft?.updates[doc.id]))
 
   for (const create of draft?.creates ?? []) {
     items.push({
