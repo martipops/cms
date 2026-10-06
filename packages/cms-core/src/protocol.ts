@@ -54,8 +54,6 @@ export type CommitOp =
   /** Every item id in the new order. New items can be listed by their `ref` */
   | { type: 'doc.reorder'; collection: string; ids: (number | string)[] }
 
-export type CommitRequest = { ops: CommitOp[] }
-
 export type CommitError = {
   /** Index of the failing op */
   op: number
@@ -63,8 +61,6 @@ export type CommitError = {
   path: string
   message: string
 }
-
-export type CommitErrorResponse = { errors: CommitError[] }
 
 export type CommitResponse = {
   /** Ids given to items created in this commit, by `ref` */
