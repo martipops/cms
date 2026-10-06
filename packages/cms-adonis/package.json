@@ -1,6 +1,6 @@
 {
   "name": "@martipops/cms-adonis",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "AdonisJS side of the CMS: content storage, validation, commit and history endpoints",
   "type": "module",
   "license": "UNLICENSED",
@@ -52,7 +52,7 @@
     "typecheck": "tsc -p tsconfig.test.json"
   },
   "dependencies": {
-    "@martipops/cms-core": "^0.1.0"
+    "@martipops/cms-core": "^0.1.1"
   },
   "peerDependencies": {
     "@adonisjs/core": "^7.0.0",

@@ -1,6 +1,6 @@
 {
   "name": "@martipops/cms-core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Isomorphic schema DSL for the CMS: field definitions, sections, collections and value helpers",
   "type": "module",
   "license": "UNLICENSED",

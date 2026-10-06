@@ -1,6 +1,6 @@
 {
   "name": "@martipops/cms-vue",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Edit mode for Inertia + Vue sites built with Nuxt UI: sections, collections, slide-out forms",
   "type": "module",
   "license": "UNLICENSED",
@@ -34,7 +34,7 @@
     "tailwind.css"
   ],
   "dependencies": {
-    "@martipops/cms-core": "^0.1.0"
+    "@martipops/cms-core": "^0.1.1"
   },
   "peerDependencies": {
     "@inertiajs/vue3": "^2.0.0",

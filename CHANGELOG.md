@@ -2,6 +2,18 @@
 
 All three packages (`@martipops/cms-core`, `@martipops/cms-adonis`, `@martipops/cms-vue`) share one version while they live together. Breaking changes are allowed before 1.0 and are listed under **Breaking**.
 
+## 0.1.1
+
+**Removed**
+
+- The unused `CommitRequest` and `CommitErrorResponse` types (`@martipops/cms-core`).
+- The `all` slot prop on `<CmsCollection>`. `items` (visible items) is still there.
+
+**Changed**
+
+- Internal tidy-ups in `@martipops/cms-vue` (collection items built in one place, list item buttons rendered from one list). No visible change.
+- The README explains how to link a local checkout into a site without loading two copies of Vue or AdonisJS.
+
 ## 0.1.0
 
 First version prepared for use outside a client site, in its own repo and published privately to GitHub Packages.
